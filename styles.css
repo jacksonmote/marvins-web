@@ -116,3 +116,33 @@ footer a.disclaimer-link:hover {
     margin-top: 40px;
     text-align: center;
 }
+
+/* Media query for mobile responsiveness (screens smaller than 768px) */
+@media (max-width: 768px) {
+    /* Navigation menu items stack vertically */
+    header nav ul li {
+        display: block;
+        margin: 10px 0;
+    }
+
+    /* Ensure embedded iframes (like the Google Map) are responsive */
+    iframe {
+        width: 100%;
+        height: auto;
+    }
+
+    /* Adjust the main content padding */
+    main {
+        padding: 10px;
+    }
+
+    /* Optional: Make the header more compact */
+    header {
+        padding: 10px 0;
+    }
+    
+    /* Optional: Resize the logo if needed */
+    header .logo {
+        font-size: 1.2em;
+    }
+}
