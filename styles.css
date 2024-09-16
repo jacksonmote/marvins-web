@@ -64,6 +64,28 @@ ul li {
     border-radius: 5px;
 }
 
+#hours table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+#hours td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 1.1em;
+}
+
+#hours h2 {
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    text-align: left;
+}
+
+#hours table tr:last-child td {
+    border-bottom: none;
+}
+
 footer {
     background-color: #333;
     color: white;
