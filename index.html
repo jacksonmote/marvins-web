@@ -14,6 +14,9 @@
     <!-- Link to the favicon -->
     <link rel="icon" href="/assets/MarvinsFavicon.png" type="image/png">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Libre+Franklin:wght@400;600;700&display=swap">
     <link rel="stylesheet" href="styles.css">
     
     <!-- Schema Markup for SEO improvement and rich results -->
@@ -55,12 +58,10 @@
     </script>
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <h1>Marvin's Delivers</h1>
-            <p>Restaurant in Greencastle, Indiana since 1972</p>
-        </div>
-        <nav>
+    <a class="skip" href="#menu">Skip to menu</a>
+    <header class="topbar">
+        <a class="wordmark" href="#top">Marvin's</a>
+        <nav aria-label="Main">
             <ul>
                 <li><a href="#menu">Menu</a></li>
                 <li><a href="#hours">Hours</a></li>
@@ -70,170 +71,349 @@
         </nav>
     </header>
 
-    <main>
-        <!-- Marvin for President banner image -->      
-        <section class="menu-banner">
-            <img src="assets/Marvins-1200x600.jpg" alt="Marvin for President Banner">
+    <main id="top">
+        <section class="hero">
+            <div class="hero-text">
+                <h1>Marvin's Delivers</h1>
+                <p class="lede">Garlic cheeseburgers, pizza, and late-night food in Greencastle, Indiana, since 1972.</p>
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="tel:+17656539200">Call (765) 653-9200</a>
+                    <a class="btn btn-secondary" href="#menu">See the menu</a>
+                </div>
+            </div>
+            <figure class="poster">
+                <img src="assets/Marvins-1200x600.jpg" alt="Hand-painted Marvin for President banner" width="1200" height="600">
+            </figure>
         </section>
-        
-        <section id="menu">
+
+        <section id="menu" class="menu">
             <h2>Menu</h2>
-            <!-- Daily Specials -->
-            <h3>Daily Specials</h3>
-            <ul>
-                <li><strong>Monday:</strong> Half GCCB, Cheese Fries, Drink - $8.00</li>
-                <li><strong>Tuesday:</strong> 3 Burritos - $9.25</li>
-                <li><strong>Wednesday:</strong> Any Two Specials</li>
-                <li><strong>Thursday:</strong> GCB, Cheese Fries, Drink - $12.25</li>
-                <li><strong>Friday Lunch:</strong> Half GCB, Cheese Fries, Drink - $8.00</li>
-            </ul>
 
-            <!-- Sandwiches -->
-            <h3>Sandwiches</h3>
-            <ul>
-                <li>Stromboli (steak, sauce, onion, mozzarella cheese) - $8.20</li>
-                <li>1/2 Stromboli - $4.10</li>
-                <li>Marvin Special Deluxe - MSD (ham, mozzarella, 1000 Island dressing, lettuce, tomato) - $7.50</li>
-                <li>1/2 MSD (ham, mozzarella, 1000 Island dressing, lettuce, tomato) - $3.75</li>
-                <li>Garlic Cheeseburger - GCB (2 hamburger patties w/ cheese) - $8.80</li>
-                <li>1/2 GCB - $4.40</li>
-                <li>Alex (GCB without the garlic) - $8.80</li>
-                <li>Garlic Chickenburger - GCCB (2 breaded chicken patties w/ cheese) - $8.80</li>
-                <li>1/2 GCCB - $4.40</li>
-                <li>Hamburger (1 quarter pound patty) - $3.95</li>
-                <li>Cheeseburger (1 quarter pound patty w/ cheese) - $4.40</li>
-                <li>DePauw Burger (cheeseburger w/ bacon) - $5.35</li>
-                <li>Fish (5oz breaded cod) - $7.50</li>
-                <li>Grilled Chicken (5oz grilled chicken breast, lettuce, tomato) - $6.60</li>
-                <li>Beta Suite (grilled chicken w/ garlic, cheese, bacon, deluxe) - $7.50</li>
-                <li>Tenderloin (7oz breaded pork loin) - $7.25</li>
-                <li>Steak Philly (chopped steak, mushroom, onion, green pepper, cheese) - $7.50</li>
-                <li>Chicken Philly (chopped chicken, mushroom, onion, green pepper, cheese) - $7.50</li>
-                <li>Hot Ham & Cheese - $3.75</li>
-                <li>Toasted Cheese - $2.85</li>
-                <li>BLT - $5.50</li>
-            </ul>
-        
-            <!-- Pizza -->
-            <h3>12" Pizza - Thin or Regular Crust</h3>
-            <p>Ingredients available: Pepperoni, Sausage, Mushrooms, Ham, Hamburger, Onion, Green Peppers, Bacon, Jalapenos, Black Olives, Green Olives, Banana Peppers, Tomato</p>
-            <ul>
-                <li>Cheese - $10.00</li>
-                <li>Veggie (mushroom, onion, green pepper, black olive) - $14.25</li>
-                <li>House (pepperoni, sausage, onion, mushroom, green pepper) - $15.30</li>
-                <li>Buffalo Chicken (blue cheese sauce, buffalo chicken) - $20.00</li>
-                <li>BBQ Chicken (BBQ sauce, chicken) - $20.00</li>
-                <li>Hawaiian (pineapple, bacon, ham) - $17.10</li>
-                <li>Additional ingredients - $1.25 each</li>
-            </ul>
-        
-            <!-- Salad -->
-            <h3>Salad</h3>
-            <ul>
-                <li>Mexican Chef (lettuce, tomato, cheese, onions, olives, meat, salsa, sour cream, chips) - $6.00</li>
-                <li>Chef (ham, lettuce, cheese, tomato, olives) - $5.00</li>
-                <li>Tossed (lettuce, cheese, tomato) - $2.25</li>
-                <li>Dressings available: Ranch, 1000 Island, French, Fat Free Italian, Poppy Seed, Honey Mustard</li>
-                <li>Substitute grilled chicken or chicken fingers - $3.15</li>
-                <li>Add grilled chicken or chicken fingers - $4.00</li>
-            </ul>
-        
-            <!-- Mexican -->
-            <h3>Mexican</h3>
-            <ul>
-                <li>Burrito (ground beef, lettuce, cheese, salsa) - $3.45</li>
-                <li>Burrito w/ sour cream - $3.75</li>
-                <li>Ole (ground beef, lettuce, cheese, onions, olives, tomato, salsa, sour cream) - $4.75</li>
-                <li>Wet* (ground beef, lettuce, cheese, onions, olives, tomato, baked w/ cheese then covered with salsa and sour cream) - $8.80</li>
-                <li>1/2 Wet - $4.40</li>
-                <li>Nachos (chips, cheese, beans, and ground beef) - $3.75</li>
-                <li>Substitute refried beans for ground beef - $0.65 / *$1.30</li>
-            </ul>
-        
-            <!-- Sides -->
-            <h3>Sides</h3>
-            <ul>
-                <li>Chicken Wings (6 bone-in wings - Flavors: BBQ, Sweet Chili, Mild, Hot, Suicide, or Sweet Ginger) - $8.75</li>
-                <li>Bread Stix (4 stix w/ cheese or marinara) - $3.75</li>
-                <li>Onion Rings (10 rings - beer battered)- $3.75</li>
-                <li>Egg Rolls (2 pork and vegetable rolls) - $4.10</li>
-                <li>Breaded Mushrooms (10 battered mushrooms) - $3.45</li>
-                <li>Chicken Tenders (3 breaded w/ choice of 1 sauce) - $5.25</li>
-                <li>Jalapeno Poppers (5 cheddar cheese) - $3.75</li>
-                <li>Mozzarella Stix (4 stix - breaded) - $3.75</li>
-                <li>Garlic Bread - $1.60</li>
-                <li>Cheesecake (1 slice - flavors vary) - $2.60</li>
-                <li>Mac Bites (7 battered) - $5.75</li>
-                <li>Garlic Cheese Bread - $2.55</li>
-                <li>French Fries - $1.90</li>
-                <li>Cheese Fries - $2.90</li>
-                <li>Frank’s Fries (cheese topping with garlic seasoning) - $2.90</li>
-                <li>Patty Fries (cheese and ground beef topping) - $4.40</li>
-                <li>Ranch Fries (fries with a side of ranch dressing) - $2.90</li>
-                <li>Additional Ranch or Cheese cup - $1.00 each</li>
-            </ul>
-        
-            <!-- Drinks -->
-            <h3>Drinks</h3>
-            <p>Coca-Cola Products: Coke, Sprite, Diet Coke, Pibb Extra, Pink Lemonade, Mellow Yellow</p>
-            <ul>
-                <li>Soda - $2.15</li>
-                <li>Fresh Brewed Iced Tea - $2.15</li>
-            </ul>
+            <nav class="cat-nav" aria-label="Menu categories">
+                <ul>
+                    <li><a href="#specials">Specials</a></li>
+                    <li><a href="#sandwiches">Sandwiches</a></li>
+                    <li><a href="#pizza">Pizza</a></li>
+                    <li><a href="#salad">Salad</a></li>
+                    <li><a href="#mexican">Mexican</a></li>
+                    <li><a href="#sides">Sides</a></li>
+                    <li><a href="#drinks">Drinks</a></li>
+                </ul>
+            </nav>
+
+            <div class="signature">
+                <div>
+                    <h3>The GCB</h3>
+                    <p>Marvin's famous Garlic Cheeseburger: two hamburger patties with cheese and garlic.</p>
+                </div>
+                <p class="sig-price"><span>$8.80</span> Half $4.40</p>
+            </div>
+
+            <section class="category" id="specials">
+                <h3>Daily Specials</h3>
+                <ul class="specials">
+                    <li>
+                        <span class="day">Monday</span>
+                        <span class="deal">Half GCCB, Cheese Fries, Drink</span><span class="price">$8.00</span>
+                    </li>
+                    <li>
+                        <span class="day">Tuesday</span>
+                        <span class="deal">3 Burritos</span><span class="price">$9.25</span>
+                    </li>
+                    <li>
+                        <span class="day">Wednesday</span>
+                        <span class="deal">Any Two Specials</span>
+                    </li>
+                    <li>
+                        <span class="day">Thursday</span>
+                        <span class="deal">GCB, Cheese Fries, Drink</span><span class="price">$12.25</span>
+                    </li>
+                    <li>
+                        <span class="day">Friday Lunch</span>
+                        <span class="deal">Half GCB, Cheese Fries, Drink</span><span class="price">$8.00</span>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="category" id="sandwiches">
+                <h3>Sandwiches</h3>
+                <ul class="items">
+                    <li>
+                        <div class="line"><span class="name">Garlic Cheeseburger (GCB)</span><span class="price">$8.80</span></div>
+                        <p class="desc">2 hamburger patties w/ cheese</p>
+                        <p class="half">Half $4.40</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Alex</span><span class="price">$8.80</span></div>
+                        <p class="desc">GCB without the garlic</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Garlic Chickenburger (GCCB)</span><span class="price">$8.80</span></div>
+                        <p class="desc">2 breaded chicken patties w/ cheese</p>
+                        <p class="half">Half $4.40</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Stromboli</span><span class="price">$8.20</span></div>
+                        <p class="desc">Steak, sauce, onion, mozzarella cheese</p>
+                        <p class="half">Half $4.10</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Marvin Special Deluxe (MSD)</span><span class="price">$7.50</span></div>
+                        <p class="desc">Ham, mozzarella, 1000 Island dressing, lettuce, tomato</p>
+                        <p class="half">Half $3.75</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Hamburger</span><span class="price">$3.95</span></div>
+                        <p class="desc">1 quarter pound patty</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Cheeseburger</span><span class="price">$4.40</span></div>
+                        <p class="desc">1 quarter pound patty w/ cheese</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">DePauw Burger</span><span class="price">$5.35</span></div>
+                        <p class="desc">Cheeseburger w/ bacon</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Fish</span><span class="price">$7.50</span></div>
+                        <p class="desc">5oz breaded cod</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Grilled Chicken</span><span class="price">$6.60</span></div>
+                        <p class="desc">5oz grilled chicken breast, lettuce, tomato</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Beta Suite</span><span class="price">$7.50</span></div>
+                        <p class="desc">Grilled chicken w/ garlic, cheese, bacon, deluxe</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Tenderloin</span><span class="price">$7.25</span></div>
+                        <p class="desc">7oz breaded pork loin</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Steak Philly</span><span class="price">$7.50</span></div>
+                        <p class="desc">Chopped steak, mushroom, onion, green pepper, cheese</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Chicken Philly</span><span class="price">$7.50</span></div>
+                        <p class="desc">Chopped chicken, mushroom, onion, green pepper, cheese</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Hot Ham &amp; Cheese</span><span class="price">$3.75</span></div>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Toasted Cheese</span><span class="price">$2.85</span></div>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">BLT</span><span class="price">$5.50</span></div>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="category" id="pizza">
+                <h3>12" Pizza</h3>
+                <p class="cat-note">Thin or regular crust. Ingredients available: Pepperoni, Sausage, Mushrooms, Ham, Hamburger, Onion, Green Peppers, Bacon, Jalapenos, Black Olives, Green Olives, Banana Peppers, Tomato</p>
+                <ul class="items">
+                    <li>
+                        <div class="line"><span class="name">Cheese</span><span class="price">$10.00</span></div>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Veggie</span><span class="price">$14.25</span></div>
+                        <p class="desc">Mushroom, onion, green pepper, black olive</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">House</span><span class="price">$15.30</span></div>
+                        <p class="desc">Pepperoni, sausage, onion, mushroom, green pepper</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Hawaiian</span><span class="price">$17.10</span></div>
+                        <p class="desc">Pineapple, bacon, ham</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Buffalo Chicken</span><span class="price">$20.00</span></div>
+                        <p class="desc">Blue cheese sauce, buffalo chicken</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">BBQ Chicken</span><span class="price">$20.00</span></div>
+                        <p class="desc">BBQ sauce, chicken</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Additional ingredients</span><span class="price">$1.25 each</span></div>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="category" id="salad">
+                <h3>Salad</h3>
+                <p class="cat-note">Dressings available: Ranch, 1000 Island, French, Fat Free Italian, Poppy Seed, Honey Mustard</p>
+                <ul class="items">
+                    <li>
+                        <div class="line"><span class="name">Mexican Chef</span><span class="price">$6.00</span></div>
+                        <p class="desc">Lettuce, tomato, cheese, onions, olives, meat, salsa, sour cream, chips</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Chef</span><span class="price">$5.00</span></div>
+                        <p class="desc">Ham, lettuce, cheese, tomato, olives</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Tossed</span><span class="price">$2.25</span></div>
+                        <p class="desc">Lettuce, cheese, tomato</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Substitute grilled chicken or chicken fingers</span><span class="price">$3.15</span></div>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Add grilled chicken or chicken fingers</span><span class="price">$4.00</span></div>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="category" id="mexican">
+                <h3>Mexican</h3>
+                <ul class="items">
+                    <li>
+                        <div class="line"><span class="name">Burrito</span><span class="price">$3.45</span></div>
+                        <p class="desc">Ground beef, lettuce, cheese, salsa</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Burrito w/ sour cream</span><span class="price">$3.75</span></div>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Ole</span><span class="price">$4.75</span></div>
+                        <p class="desc">Ground beef, lettuce, cheese, onions, olives, tomato, salsa, sour cream</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Wet*</span><span class="price">$8.80</span></div>
+                        <p class="desc">Ground beef, lettuce, cheese, onions, olives, tomato, baked w/ cheese then covered with salsa and sour cream</p>
+                        <p class="half">Half $4.40</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Nachos</span><span class="price">$3.75</span></div>
+                        <p class="desc">Chips, cheese, beans, and ground beef</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Substitute refried beans for ground beef</span><span class="price">$0.65 / *$1.30</span></div>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="category" id="sides">
+                <h3>Sides</h3>
+                <ul class="items">
+                    <li>
+                        <div class="line"><span class="name">Chicken Wings</span><span class="price">$8.75</span></div>
+                        <p class="desc">6 bone-in wings. Flavors: BBQ, Sweet Chili, Mild, Hot, Suicide, or Sweet Ginger</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Bread Stix</span><span class="price">$3.75</span></div>
+                        <p class="desc">4 stix w/ cheese or marinara</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Onion Rings</span><span class="price">$3.75</span></div>
+                        <p class="desc">10 rings, beer battered</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Egg Rolls</span><span class="price">$4.10</span></div>
+                        <p class="desc">2 pork and vegetable rolls</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Breaded Mushrooms</span><span class="price">$3.45</span></div>
+                        <p class="desc">10 battered mushrooms</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Chicken Tenders</span><span class="price">$5.25</span></div>
+                        <p class="desc">3 breaded w/ choice of 1 sauce</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Jalapeno Poppers</span><span class="price">$3.75</span></div>
+                        <p class="desc">5 cheddar cheese</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Mozzarella Stix</span><span class="price">$3.75</span></div>
+                        <p class="desc">4 stix, breaded</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Mac Bites</span><span class="price">$5.75</span></div>
+                        <p class="desc">7 battered</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Garlic Bread</span><span class="price">$1.60</span></div>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Garlic Cheese Bread</span><span class="price">$2.55</span></div>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">French Fries</span><span class="price">$1.90</span></div>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Cheese Fries</span><span class="price">$2.90</span></div>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Frank’s Fries</span><span class="price">$2.90</span></div>
+                        <p class="desc">Cheese topping with garlic seasoning</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Patty Fries</span><span class="price">$4.40</span></div>
+                        <p class="desc">Cheese and ground beef topping</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Ranch Fries</span><span class="price">$2.90</span></div>
+                        <p class="desc">Fries with a side of ranch dressing</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Cheesecake</span><span class="price">$2.60</span></div>
+                        <p class="desc">1 slice, flavors vary</p>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Additional Ranch or Cheese cup</span><span class="price">$1.00 each</span></div>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="category" id="drinks">
+                <h3>Drinks</h3>
+                <p class="cat-note">Coca-Cola Products: Coke, Sprite, Diet Coke, Pibb Extra, Pink Lemonade, Mellow Yellow</p>
+                <ul class="items">
+                    <li>
+                        <div class="line"><span class="name">Soda</span><span class="price">$2.15</span></div>
+                    </li>
+                    <li>
+                        <div class="line"><span class="name">Fresh Brewed Iced Tea</span><span class="price">$2.15</span></div>
+                    </li>
+                </ul>
+            </section>
         </section>
 
-        <section id="hours">
-            <h2>Hours of Operation</h2>
-            <table>
-                <tr>
-                    <td>Monday:</td>
-                    <td>Closed</td>
-                </tr>
-                <tr>
-                    <td>Tuesday - Thursday:</td>
-                    <td>11:00 AM - 2:00 PM, 5:00 PM - 10:00 PM</td>
-                </tr>
-                <tr>
-                    <td>Friday:</td>
-                    <td>11:00 AM - 2:00 PM, 5:00 PM - 12:00 AM</td>
-                </tr>
-                <tr>
-                    <td>Saturday:</td>
-                    <td>5:00 PM - 12:00 AM</td>
-                </tr>
-                <tr>
-                    <td>Sunday:</td>
-                    <td>5:00 PM - 10:00 PM</td>
-                </tr>
-            </table>
-        </section>
+        <div class="visit">
+            <section id="hours">
+                <h2>Hours</h2>
+                <table>
+                    <tr><th scope="row">Monday</th><td>Closed</td></tr>
+                    <tr><th scope="row">Tuesday – Thursday</th><td>11:00 AM – 2:00 PM<br>5:00 PM – 10:00 PM</td></tr>
+                    <tr><th scope="row">Friday</th><td>11:00 AM – 2:00 PM<br>5:00 PM – 12:00 AM</td></tr>
+                    <tr><th scope="row">Saturday</th><td>5:00 PM – 12:00 AM</td></tr>
+                    <tr><th scope="row">Sunday</th><td>5:00 PM – 10:00 PM</td></tr>
+                </table>
+            </section>
 
-        <section id="location">
-            <h2>Location</h2>
-            <p>202 S College Ave, Greencastle, IN, 46135</p>
-            <p>Located near The Inn at DePauw University</p>
+            <section id="location">
+                <h2>Location</h2>
+                <address>202 S College Ave<br>Greencastle, IN 46135</address>
+                <p class="muted">Near The Inn at DePauw University</p>
+                <!--Embed Google Maps for 202 S College Ave, Greencastle, IN, 46135-->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6144.657262571234!2d-86.86278900000002!3d39.642318!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x886cdfad2e1a4cc9%3A0x98980828eff327f!2sMarvin&#39;s!5e0!3m2!1sen!2sus!4v1726480991145!5m2!1sen!2sus" title="Map to Marvin's at 202 S College Ave" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </section>
+        </div>
 
-            <!--Embed Google Maps for 202 S College Ave, Greencastle, IN, 46135-->
-            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6144.657262571234!2d-86.86278900000002!3d39.642318!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x886cdfad2e1a4cc9%3A0x98980828eff327f!2sMarvin&#39;s!5e0!3m2!1sen!2sus!4v1726480991145!5m2!1sen!2sus" title="Map to Marvin's at 202 S College Ave" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </section>
-
-        <section id="contact">
-            <h2>Contact Information</h2>
-            <p>Phone: 
-                <a href="tel:+17656539200">(765) 653-9200</a>
-            </p>
-            <p>
-                <a href="https://www.facebook.com/Marvinsgreencastle/" target="_blank">Follow Marvin's on Facebook</a>
-            </p>
-            <p>
-                <a href="https://www.yelp.com/biz/marvins-greencastle" target="_blank">Review Marvin's on Yelp</a>
-            </p>
-            <p>
-                <a href="https://www.tripadvisor.com/Restaurant_Review-g37154-d538910-Reviews-Marvin_s-Greencastle_Indiana.html" target="_blank">Review Marvin's on TripAdvisor</a>
-            </p>
-            <p>
-                <a href="https://goputnam.com/eat-drink/marvins/" target="_blank">Find Marvin's in Putnam County</a>
-            </p>
+        <section id="contact" class="contact">
+            <h2>Contact</h2>
+            <p class="phone"><a href="tel:+17656539200">(765) 653-9200</a></p>
+            <ul class="links">
+                <li><a href="https://www.facebook.com/Marvinsgreencastle/" target="_blank" rel="noopener">Follow Marvin's on Facebook</a></li>
+                <li><a href="https://www.yelp.com/biz/marvins-greencastle" target="_blank" rel="noopener">Review Marvin's on Yelp</a></li>
+                <li><a href="https://www.tripadvisor.com/Restaurant_Review-g37154-d538910-Reviews-Marvin_s-Greencastle_Indiana.html" target="_blank" rel="noopener">Review Marvin's on TripAdvisor</a></li>
+                <li><a href="https://goputnam.com/eat-drink/marvins/" target="_blank" rel="noopener">Find Marvin's in Putnam County</a></li>
+            </ul>
         </section>
     </main>
 

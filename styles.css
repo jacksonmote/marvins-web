@@ -1,165 +1,363 @@
+/* Marvin's Greencastle
+   Palette taken from the Marvin for President banner:
+   brush-paint maroon, marker navy, and the dusty canvas behind them. */
+:root {
+    --maroon: #7a1f22;
+    --maroon-dark: #5c1518;
+    --navy: #1e2547;
+    --canvas: #f6eee8;
+    --paper: #fffaf6;
+    --ink: #241a1c;
+    --muted: #6e5a57;
+    --rule: #e2d3ca;
+    --display: "Bowlby One", "Arial Black", Impact, sans-serif;
+    --body: "Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 60px; }
+
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
+    font-family: var(--body);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--ink);
+    background: var(--canvas);
 }
 
-header {
-    background-color: #333;
-    color: white;
-    padding: 20px 0;
-    text-align: center;
+img { max-width: 100%; height: auto; display: block; }
+
+a { color: var(--maroon); }
+a:focus-visible, .btn:focus-visible {
+    outline: 3px solid var(--navy);
+    outline-offset: 3px;
 }
 
-header .logo {
-    font-size: 1.5em;
-}
-
-header nav ul {
-    list-style-type: none;
+h1, h2, h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    line-height: 1.05;
     margin: 0;
-    padding: 0;
-}
-
-header nav ul li {
-    display: inline;
-    margin: 0 15px;
-}
-
-header nav ul li a {
-    color: black;
-    text-decoration: none;
-    font-size: 1.1em;
-}
-
-header nav ul li a:hover,
-header nav ul li a:focus-visible {
-    text-decoration: underline;
-}
-
-main {
-    padding: 20px;
-    max-width: 1000px;
-    margin: auto;
-}
-
-section {
-    margin-bottom: 40px;
 }
 
 h2 {
-    border-bottom: 2px solid #333;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    color: #333;
+    color: var(--maroon);
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    margin-bottom: 1.5rem;
 }
 
-ul {
-    list-style-type: none;
+h3 {
+    color: var(--navy);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.skip {
+    position: absolute;
+    left: -9999px;
+}
+.skip:focus {
+    left: 1rem; top: 1rem;
+    background: var(--paper);
+    padding: .5rem 1rem;
+    z-index: 10;
+}
+
+/* ---------- Top bar ---------- */
+.topbar {
+    background: var(--navy);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .9rem clamp(1rem, 4vw, 2.5rem);
+}
+
+.wordmark {
+    font-family: var(--display);
+    font-size: 1.5rem;
+    color: #fff;
+    text-decoration: none;
+}
+
+.topbar ul {
+    list-style: none;
+    margin: 0;
     padding: 0;
+    display: flex;
+    gap: clamp(.9rem, 3vw, 2rem);
 }
 
-ul li {
-    background-color: #fff;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+.topbar a:not(.wordmark) {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
+.topbar a:not(.wordmark):hover { text-decoration: underline; text-underline-offset: 4px; }
+.topbar a:focus-visible { outline-color: #fff; }
+
+/* ---------- Layout ---------- */
+main {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 clamp(1rem, 4vw, 2.5rem);
 }
 
-#hours table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
+main > section, .visit { margin-top: clamp(3rem, 8vw, 5.5rem); }
+
+/* ---------- Hero ---------- */
+.hero {
+    display: grid;
+    grid-template-columns: 5fr 6fr;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: center;
+    margin-top: clamp(2rem, 6vw, 4rem) !important;
 }
 
-#hours td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    font-size: 1.1em;
+.hero h1 {
+    color: var(--maroon);
+    font-size: clamp(3rem, 8vw, 5.6rem);
+    letter-spacing: -0.01em;
 }
 
-#hours h2 {
-    margin-bottom: 15px;
-    font-size: 1.5em;
+.lede {
+    font-size: 1.25rem;
+    max-width: 30ch;
+    margin: 1.25rem 0 1.75rem;
+}
+
+.hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+.btn {
+    display: inline-block;
+    padding: .8rem 1.3rem;
+    border-radius: 4px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 2px solid var(--maroon);
+}
+.btn-primary { background: var(--maroon); color: #fff; }
+.btn-primary:hover { background: var(--maroon-dark); border-color: var(--maroon-dark); }
+.btn-secondary { color: var(--maroon); background: transparent; }
+.btn-secondary:hover { background: var(--paper); }
+
+/* The banner, hung on the wall like the real thing */
+.poster {
+    margin: 0;
+    transform: rotate(-1.5deg);
+    box-shadow: 0 18px 30px -12px rgba(36, 26, 28, .45);
+    border: 6px solid var(--paper);
+}
+
+/* ---------- Menu ---------- */
+.cat-nav {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--canvas);
+    border-bottom: 2px solid var(--navy);
+    margin: 0 calc(-1 * clamp(1rem, 4vw, 2.5rem)) 2rem;
+    padding: 0 clamp(1rem, 4vw, 2.5rem);
+}
+
+.cat-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.cat-nav a {
+    display: block;
+    padding: .8rem 0;
+    color: var(--navy);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.cat-nav a:hover { color: var(--maroon); }
+
+.signature {
+    background: var(--maroon);
+    color: #fff;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+.signature h3 {
+    color: #fff;
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    margin-bottom: .5rem;
+}
+.signature p { margin: 0; max-width: 40ch; font-size: 1.15rem; }
+.sig-price { text-align: right; white-space: nowrap; }
+.sig-price span {
+    display: block;
+    font-family: var(--display);
+    font-size: 2.4rem;
+    line-height: 1;
+}
+
+.category { margin-bottom: 3rem; }
+
+.cat-note {
+    color: var(--muted);
+    max-width: 70ch;
+    margin: -.5rem 0 1.25rem;
+}
+
+.items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    columns: 2;
+    column-gap: 3.5rem;
+}
+
+.items li {
+    break-inside: avoid;
+    padding: .65rem 0;
+    border-bottom: 1px solid var(--rule);
+}
+
+.line {
+    display: flex;
+    align-items: baseline;
+    gap: .5rem;
+}
+.line .name { font-weight: 700; }
+.line::after { content: none; }
+.line .price {
+    margin-left: auto;
+    font-weight: 700;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.desc, .half {
+    margin: .15rem 0 0;
+    color: var(--muted);
+    font-size: .95rem;
+}
+.half { color: var(--maroon); font-weight: 600; }
+
+/* Daily specials: a row of five days */
+.specials {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: .75rem;
+}
+.specials li {
+    background: var(--paper);
+    border-top: 5px solid var(--navy);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+}
+.specials .day { font-family: var(--display); color: var(--navy); font-size: 1.1rem; }
+.specials .deal { flex: 1; }
+.specials .price { font-weight: 700; color: var(--maroon); }
+
+/* ---------- Hours + Location ---------- */
+.visit {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+}
+
+#hours table { width: 100%; border-collapse: collapse; }
+#hours th, #hours td {
     text-align: left;
+    vertical-align: top;
+    padding: .75rem 0;
+    border-bottom: 1px solid var(--rule);
 }
+#hours th { font-weight: 700; padding-right: 1rem; }
+#hours td { font-variant-numeric: tabular-nums; }
 
-#hours table tr:last-child td {
-    border-bottom: none;
-}
+address { font-style: normal; font-size: 1.2rem; font-weight: 600; }
+.muted { color: var(--muted); margin: .25rem 0 1.25rem; }
 
-footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 10px 20px 20px;
-}
-
-footer .tagline {
-    margin: 10px 0;
-}
-
-#disclaimer {
-    max-width: 800px;
-    margin: 10px auto 0;
-    color: #ccc;
-    font-size: 0.85em;
-}
-
-#disclaimer h2 {
-    color: #ccc;
-    border-bottom: none;
-    font-size: 1.1em;
-    margin: 10px 0 5px;
-    padding: 0;
-}
-
-/* Google Map: full width up to 600px, fixed height so it never collapses */
 #location iframe {
     display: block;
     width: 100%;
-    max-width: 600px;
-    height: 350px;
+    height: 320px;
+    border: 6px solid var(--paper) !important;
 }
 
-.menu-banner {
-    margin-bottom: 30px;
+/* ---------- Contact ---------- */
+.contact { margin-bottom: 4rem; }
+.phone { margin: 0 0 1rem; }
+.phone a {
+    font-family: var(--display);
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    color: var(--navy);
+    text-decoration: none;
+}
+.phone a:hover { color: var(--maroon); }
+.links { list-style: none; padding: 0; margin: 0; }
+.links li { margin: .4rem 0; }
+.links a { font-weight: 600; }
+
+/* ---------- Footer ---------- */
+footer {
+    background: var(--navy);
+    color: #fff;
     text-align: center;
+    padding: 2rem clamp(1rem, 4vw, 2.5rem);
+}
+footer .tagline {
+    font-family: var(--display);
+    font-size: 1.4rem;
+    margin: 0 0 1rem;
+}
+#disclaimer {
+    max-width: 760px;
+    margin: 0 auto;
+    color: #c9cbe0;
+    font-size: .85rem;
+}
+#disclaimer h2 {
+    font-family: var(--body);
+    font-weight: 700;
+    color: #c9cbe0;
+    font-size: .95rem;
+    margin: 0 0 .25rem;
+}
+#disclaimer p { margin: 0; }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .poster { transform: rotate(-1deg); }
+    .specials { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    .visit { grid-template-columns: 1fr; }
 }
 
-.menu-banner img {
-    width: 100%;
-    height: auto;
+/* ---------- Phone ---------- */
+@media (max-width: 640px) {
+    .topbar { flex-direction: column; gap: .5rem; padding-bottom: .7rem; }
+    .topbar ul { gap: 1.25rem; }
+    .items { columns: 1; }
+    .signature { flex-direction: column; align-items: flex-start; }
+    .sig-price { text-align: left; }
+    #location iframe { height: 280px; }
 }
 
-/* Media query for mobile responsiveness (screens smaller than 768px) */
-@media (max-width: 768px) {
-    /* Navigation menu items stack vertically */
-    header nav ul li {
-        display: block;
-        margin: 10px 0;
-    }
-
-    /* Slightly shorter map on phones */
-    #location iframe {
-        height: 300px;
-    }
-
-    /* Adjust the main content padding */
-    main {
-        padding: 10px;
-    }
-
-    /* Optional: Make the header more compact */
-    header {
-        padding: 10px 0;
-    }
-    
-    /* Optional: Resize the logo if needed */
-    header .logo {
-        font-size: 1.2em;
-    }
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
 }
