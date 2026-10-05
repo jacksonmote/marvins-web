@@ -41,12 +41,10 @@
           "servesCuisine": "American",
           "url": "https://www.marvinsgreencastle.com",
           "menu": "https://www.marvinsgreencastle.com/#menu",
-          "openingHours": [
-            "Mo Closed",
-            "Tu,We,Th 11:00-14:00 17:00-22:00",
-            "Fr 11:00-14:00 17:00-24:00",
-            "Sa 17:00-24:00",
-            "Su 17:00-22:00"
+          "openingHoursSpecification": [
+            { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "11:00", "closes": "14:00" },
+            { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Sunday"], "opens": "17:00", "closes": "22:00" },
+            { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday", "Saturday"], "opens": "17:00", "closes": "23:59" }
           ],
           "sameAs": [
             "https://www.facebook.com/Marvinsgreencastle/",
@@ -216,7 +214,7 @@
             <p>Located near The Inn at DePauw University</p>
 
             <!--Embed Google Maps for 202 S College Ave, Greencastle, IN, 46135-->
-            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6144.657262571234!2d-86.86278900000002!3d39.642318!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x886cdfad2e1a4cc9%3A0x98980828eff327f!2sMarvin&#39;s!5e0!3m2!1sen!2sus!4v1726480991145!5m2!1sen!2sus" width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6144.657262571234!2d-86.86278900000002!3d39.642318!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x886cdfad2e1a4cc9%3A0x98980828eff327f!2sMarvin&#39;s!5e0!3m2!1sen!2sus!4v1726480991145!5m2!1sen!2sus" title="Map to Marvin's at 202 S College Ave" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </section>
 
         <section id="contact">
@@ -240,13 +238,13 @@
     </main>
 
 <footer>
-    <p>Marvin's Delivers since 1972</p>
-</footer>
+    <p class="tagline">Marvin's Delivers since 1972</p>
 
-<!-- Disclaimer at bottom of page -->
-<section id="disclaimer">
-    <h2>Disclaimer</h2>
-    <p>This website is an independently created informational resource and is not officially affiliated, associated, or endorsed by Marvin's restaurant in Greencastle, Indiana, or any of its owners or employees. The content provided on this site, including but not limited to the menu items, operating hours, pricing, and location details, is intended for general informational purposes only and may be subject to change without notice. Please contact Marvin's directly for the most up-to-date information.</p>
-</section>
+    <!-- Disclaimer -->
+    <section id="disclaimer">
+        <h2>Disclaimer</h2>
+        <p>This website is an independently created informational resource and is not officially affiliated, associated, or endorsed by Marvin's restaurant in Greencastle, Indiana, or any of its owners or employees. The content provided on this site, including but not limited to the menu items, operating hours, pricing, and location details, is intended for general informational purposes only and may be subject to change without notice. Please contact Marvin's directly for the most up-to-date information.</p>
+    </section>
+</footer>
 </body>
 </html>
