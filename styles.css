@@ -250,13 +250,13 @@ main > section, .visit { margin-top: clamp(3rem, 8vw, 5.5rem); }
 }
 .half { color: var(--maroon); font-weight: 600; }
 
-/* Daily specials: a row of five days */
+/* Daily specials: a row of four days */
 .specials {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: .75rem;
 }
 .specials li {
