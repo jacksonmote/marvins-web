@@ -1,0 +1,40 @@
+# Checks the site for HTML errors and broken links.
+# Runs on every push to main, every Monday morning, and on demand
+# (Actions tab > Site checks > Run workflow). A failed run emails the repo owner.
+name: Site checks
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 13 * * 1" # Mondays at 13:00 UTC (9 AM Eastern)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  html:
+    name: HTML validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Rules are configured in .htmlvalidate.json
+      - run: npx --yes html-validate@11 index.html 404.html
+
+  links:
+    name: Link check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Settings are in lychee.toml
+      - uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --config lychee.toml
+            --root-dir ${{ github.workspace }}
+            --no-progress
+            index.html 404.html

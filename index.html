@@ -30,7 +30,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Libre+Franklin:wght@400;600;700&display=swap">
     <link rel="stylesheet" href="styles.css">
-    
+
     <!-- Schema Markup for SEO improvement and rich results -->
     <script type="application/ld+json">
         {
@@ -91,15 +91,26 @@
                 <div class="hero-actions">
                     <a class="btn btn-primary" href="tel:+17656539200">Call (765) 653-9200</a>
                     <a class="btn btn-secondary" href="#menu">See the menu</a>
+                    <a class="btn btn-secondary" href="https://www.google.com/maps/dir/?api=1&amp;destination=Marvin%27s%2C+202+S+College+Ave%2C+Greencastle%2C+IN+46135" target="_blank" rel="noopener">Get directions</a>
                 </div>
             </div>
             <figure class="poster">
-                <img src="assets/Marvins-1200x600.jpg" alt="Hand-painted Marvin for President banner" width="1200" height="600">
+                <img src="assets/Marvins-1200x600.jpg" fetchpriority="high" alt="Hand-painted Marvin for President banner" width="1200" height="600">
             </figure>
         </section>
 
+        <!-- Shown only when printing -->
+        <div class="print-header">
+            <p class="print-name">Marvin's Restaurant</p>
+            <p>202 S College Ave, Greencastle, IN 46135 &middot; (765) 653-9200 &middot; marvinsgreencastle.com</p>
+            <p>Tue&ndash;Thu 11&ndash;2 &amp; 5&ndash;10 &middot; Fri 11&ndash;2 &amp; 5&ndash;12 &middot; Sat 5&ndash;12 &middot; Sun 5&ndash;10 &middot; Closed Monday</p>
+        </div>
+
         <section id="menu" class="menu">
-            <h2>Menu</h2>
+            <div class="menu-head">
+                <h2>Menu</h2>
+                <button class="btn btn-secondary print-btn" type="button" onclick="window.print()">Print the menu</button>
+            </div>
 
             <nav class="cat-nav" aria-label="Menu categories">
                 <ul>
@@ -396,11 +407,13 @@
             <section id="hours">
                 <h2>Hours</h2>
                 <table>
+                    <tbody>
                     <tr><th scope="row">Monday</th><td>Closed</td></tr>
                     <tr><th scope="row">Tuesday – Thursday</th><td>11:00 AM – 2:00 PM<br>5:00 PM – 10:00 PM</td></tr>
                     <tr><th scope="row">Friday</th><td>11:00 AM – 2:00 PM<br>5:00 PM – 12:00 AM</td></tr>
                     <tr><th scope="row">Saturday</th><td>5:00 PM – 12:00 AM</td></tr>
                     <tr><th scope="row">Sunday</th><td>5:00 PM – 10:00 PM</td></tr>
+                    </tbody>
                 </table>
             </section>
 
@@ -408,8 +421,9 @@
                 <h2>Location</h2>
                 <address>202 S College Ave<br>Greencastle, IN 46135</address>
                 <p class="muted">Near The Inn at DePauw University</p>
+                <p><a class="btn btn-primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=Marvin%27s%2C+202+S+College+Ave%2C+Greencastle%2C+IN+46135" target="_blank" rel="noopener">Get directions</a></p>
                 <!--Embed Google Maps for 202 S College Ave, Greencastle, IN, 46135-->
-                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6144.657262571234!2d-86.86278900000002!3d39.642318!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x886cdfad2e1a4cc9%3A0x98980828eff327f!2sMarvin&#39;s!5e0!3m2!1sen!2sus!4v1726480991145!5m2!1sen!2sus" title="Map to Marvin's at 202 S College Ave" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6144.657262571234!2d-86.86278900000002!3d39.642318!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x886cdfad2e1a4cc9%3A0x98980828eff327f!2sMarvin&#39;s!5e0!3m2!1sen!2sus!4v1726480991145!5m2!1sen!2sus" title="Map to Marvin's at 202 S College Ave" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </section>
         </div>
 
@@ -427,7 +441,7 @@
     </main>
 
     <!-- Pinned call button, shown on phones only -->
-    <a class="call-bar" href="tel:+17656539200">Call to order: (765) 653-9200</a>
+    <aside aria-label="Call to order"><a class="call-bar" href="tel:+17656539200">Call to order: (765) 653-9200</a></aside>
 
 <footer>
     <p class="tagline">Marvin's Delivers since 1972</p>

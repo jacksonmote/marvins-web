@@ -1,0 +1,18 @@
+# Link checker settings used by .github/workflows/site-checks.yml
+
+# Check web links and in-page jump links (#menu, #hours, ...).
+scheme = ["https", "http", "file"]
+include_fragments = "full"
+
+# Facebook, Yelp, and TripAdvisor often block automated checkers with
+# 403/429/999 even when the page is fine, so treat those as OK.
+accept = ["200..=299", "403", "429", "999"]
+
+# Font file host has no page at its root; it's only a preconnect hint.
+exclude = ["^https://fonts\\.gstatic\\.com/?$"]
+
+max_retries = 3
+timeout = 30
+
+# Treat links to a folder (like "/#menu" on the 404 page) as that folder's index.html.
+index_files = ["index.html"]
