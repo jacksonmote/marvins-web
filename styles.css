@@ -510,10 +510,14 @@ button.btn { font: inherit; font-weight: 700; cursor: pointer; }
 }
 .install-close:focus-visible { outline: 3px solid var(--navy); outline-offset: 0; }
 
-/* Show only the instructions that apply to this phone */
-.install-tip[data-mode="ios"] .install-android,
-.install-tip[data-mode="ios"] .install-btn,
-.install-tip[data-mode="android"] .install-ios { display: none; }
+/* Show only the instructions that apply to this phone and browser */
+.install-tip .install-step,
+.install-tip .install-btn { display: none; }
+.install-tip[data-mode="ios-safari"] .step-safari,
+.install-tip[data-mode="ios-chrome"] .step-chrome,
+.install-tip[data-mode="ios-other"] .step-other,
+.install-tip[data-mode="android"] .step-android { display: block; }
+.install-tip[data-mode="android"] .install-btn { display: inline-block; }
 
 /* On phones, sit above the pinned call bar */
 @media (max-width: 640px) {

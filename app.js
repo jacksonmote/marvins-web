@@ -53,7 +53,12 @@
   var isIOS = /iPhone|iPad|iPod/.test(ua) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   if (isIOS) {
-    setTimeout(function () { show('ios'); }, 2500);
+    // In-app browsers (Facebook, Instagram, etc.) can't add sites to the home screen
+    if (/FBAN|FBAV|Instagram|Snapchat|LinkedInApp|Line\/|Twitter|TikTok/i.test(ua)) return;
+    var mode = /CriOS/.test(ua) ? 'ios-chrome'
+      : /FxiOS|EdgiOS|OPiOS|DuckDuckGo|GSA\//.test(ua) ? 'ios-other'
+      : 'ios-safari';
+    setTimeout(function () { show(mode); }, 2500);
     return;
   }
 
