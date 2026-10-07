@@ -74,6 +74,8 @@ h3 {
     justify-content: space-between;
     gap: 1rem;
     padding: .9rem clamp(1rem, 4vw, 2.5rem);
+    /* In home-screen app mode the bar sits behind the iPhone status bar */
+    padding-top: max(.9rem, env(safe-area-inset-top, 0px));
 }
 
 .wordmark {
@@ -458,4 +460,66 @@ button.btn { font: inherit; font-weight: 700; cursor: pointer; }
     .desc, .half { font-size: 8.5pt; margin-top: 0; }
 
     a { color: #000; text-decoration: none; }
+}
+
+/* ---------- Home-screen app mode ---------- */
+/* Printing from an installed app is awkward on phones, so hide the button */
+@media (display-mode: standalone) {
+    .print-btn { display: none; }
+}
+.standalone .print-btn { display: none; }
+
+/* ---------- Install tip ---------- */
+.install-tip {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    z-index: 30;
+    max-width: 440px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .85rem 2.5rem .85rem .85rem;
+    background: var(--paper);
+    color: var(--ink);
+    border-top: 5px solid var(--navy);
+    border-radius: 6px;
+    box-shadow: 0 12px 30px -8px rgba(36, 26, 28, .45);
+}
+.install-tip[hidden] { display: none; }
+.install-tip img { border-radius: 10px; flex: none; }
+.install-text { flex: 1; min-width: 0; }
+.install-text p { margin: 0; font-size: .92rem; line-height: 1.35; }
+.install-text .install-title { font-weight: 700; color: var(--navy); margin-bottom: .15rem; }
+.share-icon { vertical-align: -3px; color: var(--navy); }
+.install-tip .install-btn { padding: .5rem .9rem; flex: none; }
+.install-close {
+    position: absolute;
+    top: .2rem;
+    right: .35rem;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+.install-close:focus-visible { outline: 3px solid var(--navy); outline-offset: 0; }
+
+/* Show only the instructions that apply to this phone */
+.install-tip[data-mode="ios"] .install-android,
+.install-tip[data-mode="ios"] .install-btn,
+.install-tip[data-mode="android"] .install-ios { display: none; }
+
+/* On phones, sit above the pinned call bar */
+@media (max-width: 640px) {
+    .install-tip { bottom: calc(4.4rem + env(safe-area-inset-bottom, 0px)); }
+}
+
+@media print {
+    .install-tip { display: none !important; }
 }
