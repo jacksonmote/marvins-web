@@ -71,7 +71,8 @@ LICENSE                          MIT license for the code (see License)
 app.js                           Offline setup, app-mode detection, and the install tip; loaded by both pages
 sw.js                            Service worker: saves the site for offline use
 manifest.webmanifest             App name, colors, and icons for home-screen installs
-assets/                          Banner image, favicon, and home-screen icons
+favicon.ico                      Browser-tab and Google search icon (16, 32, and 48 px)
+assets/                          Banner image, large favicon, and home-screen icons
 .github/workflows/site-checks.yml  Automated HTML and link checks
 .htmlvalidate.json               Settings for the HTML check
 lychee.toml                      Settings for the link check
@@ -96,6 +97,8 @@ Everything below is in `index.html` unless noted.
 **Adding images or other files.** Offline support saves a fixed list of files, set in `PRECACHE` at the top of `sw.js`. If you add a new image or file the page depends on, add it to that list and change `CACHE_VERSION` (for example, `v1` to `v2`) so phones pick up the new list. Editing existing files, including menu and price changes, needs nothing extra.
 
 **Home-screen icons.** The icons in `assets/` (`apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, and `icon-maskable-512.png`) are crops of the banner. If you replace them, keep the same file names and sizes. The maskable version needs Marvin's face inside the center 80%, because Android trims the edges into circles and other shapes.
+
+**Favicon.** `favicon.ico` and `assets/favicon-192.png` are a tighter crop of Marvin's face than the home-screen icons, so the glasses stay readable at tiny sizes. They're what browser tabs and Google search results show. Keep the file names the same if you replace them, since Google prefers a favicon address that doesn't change.
 
 **Install tip wording.** The instructions for each browser are in `index.html`, in the `install-tip` block near the bottom. `app.js` decides which version each phone sees.
 
