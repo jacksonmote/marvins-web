@@ -54,7 +54,8 @@ The site is plain HTML and CSS with no framework, no build step, and no dependen
 - **Google Maps** embed for the location map, and Google Maps links for directions
 - **Schema.org structured data (JSON-LD)** so search engines can read hours, address, and phone
 - **Open Graph and Twitter Card tags** for link previews
-- **GitHub Actions** to run the automated checks
+- **Content Security Policy and referrer policy** (meta tags on both pages) so the pages can only load their own files plus the Google Maps embed, with no inline scripts or styles
+- **GitHub Actions** to run the automated checks, with each action pinned to a full commit SHA and kept current by Dependabot
 - **html-validate** and **lychee** for HTML validation and link checking
 - **axe** and **Lighthouse** for accessibility and performance auditing
 
@@ -67,6 +68,7 @@ styles.css                       All styling, including the print layout; shared
 robots.txt                       Tells search engines they can crawl the site
 sitemap.xml                      Lists the page for search engines
 CNAME                            Points GitHub Pages at marvinsgreencastle.com
+.nojekyll                        Tells GitHub Pages to serve the files as-is (no Jekyll processing)
 LICENSE                          MIT license for the code (see License)
 app.js                           Offline setup, app-mode detection, and the install tip; loaded by both pages
 sw.js                            Service worker: saves the site for offline use
@@ -74,7 +76,9 @@ manifest.webmanifest             App name, colors, and icons for home-screen ins
 favicon.ico                      Browser-tab and Google search icon (16, 32, and 48 px)
 assets/                          Banner image, large favicon, and home-screen icons
 assets/fonts/                    Self-hosted WOFF2 fonts (Bowlby One, Libre Franklin) and their OFL license
-.github/workflows/site-checks.yml  Automated HTML and link checks
+.github/workflows/site-checks.yml  Automated HTML, link, and site-file checks
+.github/scripts/check-site.js    Checks offline files, manifest, structured data, and local file references
+.github/dependabot.yml           Weekly pull requests when a pinned GitHub Action has an update
 .htmlvalidate.json               Settings for the HTML check
 lychee.toml                      Settings for the link check
 ```
@@ -94,6 +98,8 @@ Everything below is in `index.html` unless noted.
 3. `openingHoursSpecification` in the structured data near the top of the file, which Google reads. Days left out of this list are treated as closed. Use 24-hour times, and `23:59` for midnight.
 
 **Address or phone.** These also appear in several places: the hero and contact buttons, the pinned call bar (in both `index.html` and `404.html`), the print header, the "Get directions" links, the map, and the structured data. Search the files for the old value to find them all.
+
+**New outside services.** The pages have a Content-Security-Policy (a `<meta http-equiv="Content-Security-Policy">` tag near the top of `<head>`) that only allows the site's own files and the Google Maps embed. If you add another embed, analytics, a font host, or anything else loaded from outside, add its address to the policy on **both** `index.html` and `404.html`, or browsers will block it. The same goes for inline scripts, inline styles, and `style="..."` attributes: put them in `app.js` or `styles.css` instead.
 
 **Adding images or other files.** Offline support saves a fixed list of files, set in `PRECACHE` at the top of `sw.js`. If you add a new image or file the page depends on, add it to that list and change `CACHE_VERSION` (for example, `v1` to `v2`) so phones pick up the new list. Editing existing files, including menu and price changes, needs nothing extra.
 
@@ -121,18 +127,22 @@ Offline support and the install tip also need the local web server, since browse
 
 ## Automated checks
 
-The **Site checks** workflow runs on every push to `main`, every Monday at 9 AM Eastern, and on demand (**Actions → Site checks → Run workflow**). It has two jobs:
+The **Site checks** workflow runs on every push to `main`, every Monday at 9 AM Eastern, and on demand (**Actions → Site checks → Run workflow**). It has three jobs:
 
 - **HTML validation** checks `index.html` and `404.html` with [html-validate](https://html-validate.org/). Rules are set in `.htmlvalidate.json`.
 - **Link check** checks every link with [lychee](https://lychee.cli.rs/), including in-page jump links like `#menu`. Settings are in `lychee.toml`. Facebook, Yelp, and TripAdvisor often block automated checkers even when their pages are fine, so those "blocked" responses are treated as OK.
+- **Site files** runs `.github/scripts/check-site.js`, which fails if a file listed in `PRECACHE` (in `sw.js`) is missing, `manifest.webmanifest` or the structured data in `index.html` is not valid JSON, a manifest icon is missing, or a local file referenced by `href` or `src` in either page does not exist.
 
 If a check fails, GitHub emails the repo owner. Open the failed run in the Actions tab to see which line or link caused it.
 
-To run the HTML check locally (requires Node.js):
+To run the HTML and site-file checks locally (requires Node.js):
 
 ```bash
 npx html-validate index.html 404.html
+node .github/scripts/check-site.js
 ```
+
+The actions used by the workflow are pinned to full commit SHAs (with the version in a comment), and **Dependabot** (`.github/dependabot.yml`) opens a pull request each week when one has a newer release. Review and merge those like any other change; the Site checks run confirms nothing broke.
 
 GitHub pauses scheduled workflows after 60 days without commits. If that happens, re-enable it from the Actions tab.
 

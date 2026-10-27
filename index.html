@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; frame-src https://www.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Marvin's Restaurant | Greencastle, Indiana</title>
     <link rel="canonical" href="https://marvinsgreencastle.com/">
 
@@ -116,7 +118,7 @@
         <section id="menu" class="menu">
             <div class="menu-head">
                 <h2>Menu</h2>
-                <button class="btn btn-secondary print-btn" type="button" onclick="window.print()">Print the menu</button>
+                <button class="btn btn-secondary print-btn" type="button">Print the menu</button>
             </div>
 
             <nav class="cat-nav" aria-label="Menu categories">
