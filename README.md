@@ -147,10 +147,6 @@ The actions used by the workflow are pinned to full commit SHAs (with the versio
 
 GitHub pauses scheduled workflows after 60 days without commits. If that happens, re-enable it from the Actions tab.
 
-## Monitoring
-
-The live site is also watched by an external uptime monitor that checks every few minutes that the page loads and still shows the "Marvin's Delivers" headline. If that headline ever changes, update the monitor's keyword to match. Domain renewal is handled through the registrar's auto-renew.
-
 ## License
 
 The code in this repository is available under the [MIT License](LICENSE). As noted at the top of that file, the license covers the code only and does not grant any rights to the Marvin's name, menu content, photographs, or other images. The font files in `assets/fonts/` are separate: they are licensed under the SIL Open Font License (see `assets/fonts/OFL.txt`).
