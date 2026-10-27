@@ -17,7 +17,11 @@
     (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
   if (isStandalone) root.classList.add('standalone');
 
-  // 3. Install tip (homepage only, never in app mode)
+  // 3. Print button (homepage only)
+  var printBtn = document.querySelector('.print-btn');
+  if (printBtn) printBtn.addEventListener('click', function () { window.print(); });
+
+  // 4. Install tip (homepage only, never in app mode)
   var tip = document.getElementById('install-tip');
   if (!tip || isStandalone) return;
 
