@@ -50,7 +50,7 @@ The site is plain HTML and CSS with no framework, no build step, and no dependen
 - **JavaScript** (no libraries) for the print button, offline support, app-mode detection, and the install tip
 - **Web App Manifest** so phones can install the site to the home screen
 - **Service Worker and Cache API** for offline support
-- **Google Fonts**: Bowlby One for headings and Libre Franklin for body text
+- **Self-hosted web fonts** (WOFF2 files in `assets/fonts/`): Bowlby One for headings and Libre Franklin for body text. Both are licensed under the SIL Open Font License (see `assets/fonts/OFL.txt`), and nothing is loaded from Google Fonts
 - **Google Maps** embed for the location map, and Google Maps links for directions
 - **Schema.org structured data (JSON-LD)** so search engines can read hours, address, and phone
 - **Open Graph and Twitter Card tags** for link previews
@@ -73,6 +73,7 @@ sw.js                            Service worker: saves the site for offline use
 manifest.webmanifest             App name, colors, and icons for home-screen installs
 favicon.ico                      Browser-tab and Google search icon (16, 32, and 48 px)
 assets/                          Banner image, large favicon, and home-screen icons
+assets/fonts/                    Self-hosted WOFF2 fonts (Bowlby One, Libre Franklin) and their OFL license
 .github/workflows/site-checks.yml  Automated HTML and link checks
 .htmlvalidate.json               Settings for the HTML check
 lychee.toml                      Settings for the link check
