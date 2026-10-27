@@ -1,4 +1,4 @@
-# Checks the site for HTML errors and broken links.
+# Checks the site for HTML errors, broken links, and missing or invalid site files.
 # Runs on every push to main, every Monday morning, and on demand
 # (Actions tab > Site checks > Run workflow). A failed run emails the repo owner.
 name: Site checks

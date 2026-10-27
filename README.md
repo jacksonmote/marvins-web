@@ -39,7 +39,8 @@
 - Accessibility checked with axe and Lighthouse (no issues found)
 - Web app manifest and home-screen icons made from the banner
 - Offline support through a service worker that always loads the live site when online, so menu and price changes show up right away
-- Automated weekly HTML validation and link checking (see [Automated checks](#automated-checks))
+- Content Security Policy and referrer policy on both pages, so only the site's own files and the Google Maps embed can load
+- Automated HTML validation, link checking, and site-file checks, run weekly and after every push to `main` (see [Automated checks](#automated-checks))
 
 ## Technologies used
 
@@ -70,7 +71,7 @@ sitemap.xml                      Lists the page for search engines
 CNAME                            Points GitHub Pages at marvinsgreencastle.com
 .nojekyll                        Tells GitHub Pages to serve the files as-is (no Jekyll processing)
 LICENSE                          MIT license for the code (see License)
-app.js                           Offline setup, app-mode detection, and the install tip; loaded by both pages
+app.js                           Print button, offline setup, app-mode detection, and the install tip; loaded by both pages
 sw.js                            Service worker: saves the site for offline use
 manifest.webmanifest             App name, colors, and icons for home-screen installs
 favicon.ico                      Browser-tab and Google search icon (16, 32, and 48 px)
@@ -113,7 +114,7 @@ Everything below is in `index.html` unless noted.
 
 ## Previewing locally
 
-Open `index.html` in any browser to check your changes. To preview the printed menu, use your browser's Print Preview.
+Open `index.html` in any browser to check your content changes. To preview the printed menu, use your browser's Print Preview (Ctrl+P). The page links to `app.js` and the icons with paths that start with `/`, so the **Print the menu** button, offline support, and the install tip only work through the local web server below.
 
 `404.html` uses paths that start with `/`, so it only looks right when served from a local web server. From the project folder, run:
 
@@ -127,7 +128,7 @@ Offline support and the install tip also need the local web server, since browse
 
 ## Automated checks
 
-The **Site checks** workflow runs on every push to `main`, every Monday at 9 AM Eastern, and on demand (**Actions → Site checks → Run workflow**). It has three jobs:
+The **Site checks** workflow runs on every push to `main`, every Monday at 9 AM Eastern, and on demand (**Actions → Site checks → Run workflow**, where you can also pick a branch to check before merging). It has three jobs:
 
 - **HTML validation** checks `index.html` and `404.html` with [html-validate](https://html-validate.org/). Rules are set in `.htmlvalidate.json`.
 - **Link check** checks every link with [lychee](https://lychee.cli.rs/), including in-page jump links like `#menu`. Settings are in `lychee.toml`. Facebook, Yelp, and TripAdvisor often block automated checkers even when their pages are fine, so those "blocked" responses are treated as OK.
@@ -142,7 +143,7 @@ npx html-validate index.html 404.html
 node .github/scripts/check-site.js
 ```
 
-The actions used by the workflow are pinned to full commit SHAs (with the version in a comment), and **Dependabot** (`.github/dependabot.yml`) opens a pull request each week when one has a newer release. Review and merge those like any other change; the Site checks run confirms nothing broke.
+The actions used by the workflow are pinned to full commit SHAs (with the version in a comment), and **Dependabot** (`.github/dependabot.yml`) opens a pull request each week when one has a newer release. Review and merge those like any other change. The Site checks workflow does not run on pull requests by itself, so before merging, run it on the PR's branch from the Actions tab (**Run workflow**).
 
 GitHub pauses scheduled workflows after 60 days without commits. If that happens, re-enable it from the Actions tab.
 
@@ -152,4 +153,4 @@ The live site is also watched by an external uptime monitor that checks every fe
 
 ## License
 
-The code in this repository is available under the [MIT License](LICENSE). As noted at the top of that file, the license covers the code only and does not grant any rights to the Marvin's name, menu content, photographs, or other images.
+The code in this repository is available under the [MIT License](LICENSE). As noted at the top of that file, the license covers the code only and does not grant any rights to the Marvin's name, menu content, photographs, or other images. The font files in `assets/fonts/` are separate: they are licensed under the SIL Open Font License (see `assets/fonts/OFL.txt`).
