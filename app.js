@@ -21,7 +21,37 @@
   var printBtn = document.querySelector('.print-btn');
   if (printBtn) printBtn.addEventListener('click', function () { window.print(); });
 
-  // 4. Install tip (homepage only, never in app mode)
+  // 4. Map: the Google Maps embed loads just before the Location section scrolls
+  // into view, so visitors who never get that far load nothing from Google
+  var mapFrame = document.querySelector('.map-frame');
+  if (mapFrame) {
+    var loadMap = function () {
+      if (navigator.onLine === false) {
+        mapFrame.querySelector('.map-status').textContent = 'The map needs an internet connection';
+        window.addEventListener('online', loadMap, { once: true });
+        return;
+      }
+      var frame = document.createElement('iframe');
+      frame.src = mapFrame.getAttribute('data-map-src');
+      frame.title = "Map to Marvin's at 202 S College Ave";
+      frame.setAttribute('allowfullscreen', '');
+      frame.referrerPolicy = 'no-referrer-when-downgrade';
+      mapFrame.replaceWith(frame);
+    };
+
+    if ('IntersectionObserver' in window) {
+      var mapObserver = new IntersectionObserver(function (entries) {
+        if (!entries.some(function (e) { return e.isIntersecting; })) return;
+        mapObserver.disconnect();
+        loadMap();
+      }, { rootMargin: '300px' });
+      mapObserver.observe(mapFrame);
+    } else {
+      loadMap();
+    }
+  }
+
+  // 5. Install tip (homepage only, never in app mode)
   var tip = document.getElementById('install-tip');
   if (!tip || isStandalone) return;
 
