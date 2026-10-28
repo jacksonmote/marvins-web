@@ -1,9 +1,12 @@
 # Checks the site for HTML errors, broken links, and missing or invalid site files.
-# Runs on every push to main, every Monday morning, and on demand
+# Runs on every pull request into main, every push to main, every Monday morning,
+# and on demand
 # (Actions tab > Site checks > Run workflow). A failed run emails the repo owner.
 name: Site checks
 
 on:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
   schedule:
@@ -12,6 +15,11 @@ on:
 
 permissions:
   contents: read
+
+# A new commit on a PR cancels that PR's older run
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   html:
