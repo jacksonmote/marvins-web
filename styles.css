@@ -165,6 +165,9 @@ main > section, .visit { margin-top: clamp(3rem, 8vw, 5.5rem); }
     margin: 1.25rem 0 1.75rem;
 }
 
+.unofficial-note { color: var(--muted); font-size: .92rem; margin: -1rem 0 1.5rem; max-width: 34ch; }
+.unofficial-note a { color: var(--maroon); font-weight: 600; }
+
 .hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
 
 .btn {
