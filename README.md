@@ -21,6 +21,7 @@
 - Full menu with prices, half-size options, and a featured GCB section
 - Daily specials, hours, and a Google Map that loads automatically when a visitor scrolls near the Location section, so visitors who don't scroll that far load nothing from Google (when the map does load, Google may set its own cookies)
 - A short "unofficial fan site" note in the hero that links to Marvin's Facebook page for official news, alongside the full disclaimer at the bottom of the page
+- Automatic dark mode that follows the device's light/dark setting (no toggle button); the printed menu stays black on white either way
 - Category bar that stays pinned while scrolling the menu
 - Tap-to-call buttons, including a call bar pinned to the bottom of the screen on phones
 - "Get directions" buttons that open Google Maps with Marvin's as the destination
@@ -48,7 +49,7 @@
 The site is plain HTML and CSS with no framework, no build step, and no dependencies to install.
 
 - **HTML5** for the page structure, with semantic landmarks for accessibility
-- **CSS3** for all styling: custom properties for the color palette, CSS Grid and Flexbox for layout, a sticky menu bar, and a print stylesheet for the printable menu
+- **CSS3** for all styling: custom properties for the color palette (with an automatic dark mode through `prefers-color-scheme`), CSS Grid and Flexbox for layout, a sticky menu bar, and a print stylesheet for the printable menu
 - **JavaScript** (no libraries) for the print button, the scroll-triggered map, offline support, app-mode detection, and the install tip
 - **Web App Manifest** so phones can install the site to the home screen
 - **Service Worker and Cache API** for offline support
@@ -94,6 +95,8 @@ Everything below is in `index.html` unless noted.
 **Daily specials.** Each day is a `<li>` inside `<ul class="specials">`. The specials row is sized for four days in `styles.css` (`grid-template-columns: repeat(4, 1fr)`), so change that number if you add or remove a day.
 
 **Unofficial-site notice.** The hero has a short "unofficial fan site" note (`<p class="unofficial-note">`) linking to Marvin's Facebook page, and the `print-header` block has a matching line for the printed menu. If you reword one, update the other and keep the full disclaimer in the footer.
+
+**Colors and dark mode.** Colors in `styles.css` are custom properties named by job (`--accent-text`, `--accent-fill`, `--heading-alt`, `--bar-bg`, `--frame`, `--focus`, and so on), not by hue, because the same maroon is text in some places and a fill in others. The light values are in `:root`, and the dark values are in the `@media (prefers-color-scheme: dark)` block right below it. For any new color, use these properties (or add a new one), give it a dark value in that block, and check contrast in both modes. The `@media print` block, further down, resets every one of them to black on white so the printed menu doesn't change in dark mode, so add any new property there too. The Google map itself stays light because Google's embed has no dark version.
 
 **Hours.** Hours appear in three places that need to match:
 

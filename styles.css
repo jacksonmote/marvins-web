@@ -35,17 +35,50 @@
 /* Marvin's Greencastle
    Palette taken from the Marvin for President banner:
    brush-paint maroon, marker navy, and the dusty canvas behind them. */
+/* Colors are named by job, not by hue, so the dark palette can change them separately.
+   The same maroon is text on one element and a fill on another, so they are separate here. */
 :root {
-    --maroon: #7a1f22;
-    --maroon-dark: #5c1518;
-    --navy: #1e2547;
+    color-scheme: light dark;
     --canvas: #f6eee8;
     --paper: #fffaf6;
     --ink: #241a1c;
     --muted: #6e5a57;
     --rule: #e2d3ca;
+    --accent-text: #7a1f22;      /* headings, links, outline buttons, prices */
+    --accent-fill: #7a1f22;      /* primary buttons, GCB block, call bar (white text on top) */
+    --accent-fill-hover: #5c1518;
+    --heading-alt: #1e2547;      /* subheadings, menu bar links, specials days */
+    --line-strong: #1e2547;      /* menu bar underline, specials and install-tip top borders */
+    --bar-bg: #1e2547;           /* top bar and footer */
+    --frame: #fffaf6;            /* banner and map borders */
+    --placeholder: #efe3da;      /* map placeholder */
+    --focus: #1e2547;            /* keyboard focus outline */
+    --shadow: rgba(36, 26, 28, .45);
+    --shadow-bar: rgba(36, 26, 28, .25);
     --display: "Bowlby One", "Arial Black", Impact, sans-serif;
     --body: "Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Dark mode follows the device setting. It must stay above the print block, which forces black on white. */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --canvas: #1b1517;
+        --paper: #261e20;
+        --ink: #f2e8e3;
+        --muted: #bba9a3;
+        --rule: #3d3134;
+        --accent-text: #ef7d72;
+        --accent-fill: #8f2629;
+        --accent-fill-hover: #a52e31;
+        --heading-alt: #aab8f0;
+        --line-strong: #6b79c0;
+        --bar-bg: #131830;
+        --frame: #3a2e30;
+        --placeholder: #2e2426;
+        --focus: #aab8f0;
+        --shadow: rgba(0, 0, 0, .7);
+        --shadow-bar: rgba(0, 0, 0, .6);
+    }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -63,9 +96,9 @@ body {
 
 img { max-width: 100%; height: auto; display: block; }
 
-a { color: var(--maroon); }
+a { color: var(--accent-text); }
 a:focus-visible, .btn:focus-visible {
-    outline: 3px solid var(--navy);
+    outline: 3px solid var(--focus);
     outline-offset: 3px;
 }
 
@@ -77,13 +110,13 @@ h1, h2, h3 {
 }
 
 h2 {
-    color: var(--maroon);
+    color: var(--accent-text);
     font-size: clamp(2.2rem, 5vw, 3.2rem);
     margin-bottom: 1.5rem;
 }
 
 h3 {
-    color: var(--navy);
+    color: var(--heading-alt);
     font-size: 1.5rem;
     margin-bottom: 1rem;
 }
@@ -101,7 +134,7 @@ h3 {
 
 /* ---------- Top bar ---------- */
 .topbar {
-    background: var(--navy);
+    background: var(--bar-bg);
     color: #fff;
     display: flex;
     align-items: center;
@@ -154,7 +187,7 @@ main > section, .visit { margin-top: clamp(3rem, 8vw, 5.5rem); }
 }
 
 .hero h1 {
-    color: var(--maroon);
+    color: var(--accent-text);
     font-size: clamp(3rem, 8vw, 5.6rem);
     letter-spacing: -0.01em;
 }
@@ -166,7 +199,7 @@ main > section, .visit { margin-top: clamp(3rem, 8vw, 5.5rem); }
 }
 
 .unofficial-note { color: var(--muted); font-size: .92rem; margin: -1rem 0 1.5rem; max-width: 34ch; }
-.unofficial-note a { color: var(--maroon); font-weight: 600; }
+.unofficial-note a { color: var(--accent-text); font-weight: 600; }
 
 .hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
 
@@ -176,19 +209,19 @@ main > section, .visit { margin-top: clamp(3rem, 8vw, 5.5rem); }
     border-radius: 4px;
     font-weight: 700;
     text-decoration: none;
-    border: 2px solid var(--maroon);
+    border: 2px solid var(--accent-text);
 }
-.btn-primary { background: var(--maroon); color: #fff; }
-.btn-primary:hover { background: var(--maroon-dark); border-color: var(--maroon-dark); }
-.btn-secondary { color: var(--maroon); background: transparent; }
+.btn-primary { background: var(--accent-fill); border-color: var(--accent-fill); color: #fff; }
+.btn-primary:hover { background: var(--accent-fill-hover); border-color: var(--accent-fill-hover); }
+.btn-secondary { color: var(--accent-text); background: transparent; }
 .btn-secondary:hover { background: var(--paper); }
 
 /* The banner, hung on the wall like the real thing */
 .poster {
     margin: 0;
     transform: rotate(-1.5deg);
-    box-shadow: 0 18px 30px -12px rgba(36, 26, 28, .45);
-    border: 6px solid var(--paper);
+    box-shadow: 0 18px 30px -12px var(--shadow);
+    border: 6px solid var(--frame);
 }
 .poster img { aspect-ratio: 2 / 1; }
 
@@ -198,7 +231,7 @@ main > section, .visit { margin-top: clamp(3rem, 8vw, 5.5rem); }
     top: 0;
     z-index: 5;
     background: var(--canvas);
-    border-bottom: 2px solid var(--navy);
+    border-bottom: 2px solid var(--line-strong);
     margin: 0 calc(-1 * clamp(1rem, 4vw, 2.5rem)) 2rem;
     padding: 0 clamp(1rem, 4vw, 2.5rem);
 }
@@ -216,15 +249,15 @@ main > section, .visit { margin-top: clamp(3rem, 8vw, 5.5rem); }
 .cat-nav a {
     display: block;
     padding: .8rem 0;
-    color: var(--navy);
+    color: var(--heading-alt);
     font-weight: 600;
     text-decoration: none;
     white-space: nowrap;
 }
-.cat-nav a:hover { color: var(--maroon); }
+.cat-nav a:hover { color: var(--accent-text); }
 
 .signature {
-    background: var(--maroon);
+    background: var(--accent-fill);
     color: #fff;
     padding: clamp(1.5rem, 4vw, 2.5rem);
     display: flex;
@@ -288,7 +321,7 @@ main > section, .visit { margin-top: clamp(3rem, 8vw, 5.5rem); }
     color: var(--muted);
     font-size: .95rem;
 }
-.half { color: var(--maroon); font-weight: 600; }
+.half { color: var(--accent-text); font-weight: 600; }
 
 /* Daily specials: a row of four days */
 .specials {
@@ -301,15 +334,15 @@ main > section, .visit { margin-top: clamp(3rem, 8vw, 5.5rem); }
 }
 .specials li {
     background: var(--paper);
-    border-top: 5px solid var(--navy);
+    border-top: 5px solid var(--line-strong);
     padding: 1rem;
     display: flex;
     flex-direction: column;
     gap: .35rem;
 }
-.specials .day { font-family: var(--display); color: var(--navy); font-size: 1.1rem; }
+.specials .day { font-family: var(--display); color: var(--heading-alt); font-size: 1.1rem; }
 .specials .deal { flex: 1; }
-.specials .price { font-weight: 700; color: var(--maroon); }
+.specials .price { font-weight: 700; color: var(--accent-text); }
 
 /* ---------- Hours + Location ---------- */
 .visit {
@@ -336,7 +369,7 @@ address { font-style: normal; font-size: 1.2rem; font-weight: 600; }
     display: block;
     width: 100%;
     height: 320px;
-    border: 6px solid var(--paper);
+    border: 6px solid var(--frame);
 }
 
 /* Stands in for the map until app.js loads it, just before the section scrolls into view */
@@ -348,10 +381,10 @@ address { font-style: normal; font-size: 1.2rem; font-weight: 600; }
     gap: .75rem;
     padding: 1rem;
     text-align: center;
-    background: #efe3da;
+    background: var(--placeholder);
 }
 .map-frame p { margin: 0; }
-.map-title { font-family: var(--display); color: var(--navy); font-size: 1.1rem; }
+.map-title { font-family: var(--display); color: var(--heading-alt); font-size: 1.1rem; }
 .map-status { color: var(--muted); font-size: .92rem; }
 .map-status:empty { display: none; }
 
@@ -361,17 +394,17 @@ address { font-style: normal; font-size: 1.2rem; font-weight: 600; }
 .phone a {
     font-family: var(--display);
     font-size: clamp(1.8rem, 5vw, 2.6rem);
-    color: var(--navy);
+    color: var(--heading-alt);
     text-decoration: none;
 }
-.phone a:hover { color: var(--maroon); }
+.phone a:hover { color: var(--accent-text); }
 .links { list-style: none; padding: 0; margin: 0; }
 .links li { margin: .4rem 0; }
 .links a { font-weight: 600; }
 
 /* ---------- Footer ---------- */
 footer {
-    background: var(--navy);
+    background: var(--bar-bg);
     color: #fff;
     text-align: center;
     padding: 2rem clamp(1rem, 4vw, 2.5rem);
@@ -429,16 +462,16 @@ footer .tagline {
         right: 0;
         bottom: 0;
         z-index: 20;
-        background: var(--maroon);
+        background: var(--accent-fill);
         color: #fff;
         text-align: center;
         font-weight: 700;
         font-size: 1.1rem;
         text-decoration: none;
         padding: .95rem 1rem calc(.95rem + env(safe-area-inset-bottom, 0px));
-        box-shadow: 0 -6px 16px rgba(36, 26, 28, .25);
+        box-shadow: 0 -6px 16px var(--shadow-bar);
     }
-    .call-bar:active { background: var(--maroon-dark); }
+    .call-bar:active { background: var(--accent-fill-hover); }
     .call-bar:focus-visible { outline: 3px solid #fff; outline-offset: -6px; }
     /* Keep the footer from hiding behind the bar */
     body { padding-bottom: calc(3.4rem + env(safe-area-inset-bottom, 0px)); }
@@ -453,7 +486,7 @@ footer .tagline {
     padding: clamp(3rem, 10vw, 6rem) 0;
 }
 .notfound h1 {
-    color: var(--maroon);
+    color: var(--accent-text);
     font-size: clamp(2.6rem, 8vw, 4.8rem);
 }
 .notfound p { font-size: 1.2rem; max-width: 36ch; margin: 1rem 0 1.75rem; }
@@ -474,7 +507,16 @@ button.btn { font: inherit; font-weight: 700; cursor: pointer; }
 @media print {
     @page { margin: 0.5in; }
 
-    :root { --ink: #000; --muted: #333; --maroon: #000; --navy: #000; --rule: #bbb; }
+    /* Always black on white, even when the device is in dark mode */
+    :root {
+        color-scheme: light;
+        --canvas: #fff; --paper: #fff;
+        --ink: #000; --muted: #333; --rule: #bbb;
+        --accent-text: #000; --accent-fill: #000; --accent-fill-hover: #000;
+        --heading-alt: #000; --line-strong: #000; --bar-bg: #fff;
+        --frame: #fff; --placeholder: #fff; --focus: #000;
+        --shadow: transparent; --shadow-bar: transparent;
+    }
     html, body { background: #fff !important; }
     body { font-size: 9.5pt; line-height: 1.3; padding: 0 !important; }
 
@@ -538,16 +580,16 @@ button.btn { font: inherit; font-weight: 700; cursor: pointer; }
     padding: .85rem 2.5rem .85rem .85rem;
     background: var(--paper);
     color: var(--ink);
-    border-top: 5px solid var(--navy);
+    border-top: 5px solid var(--line-strong);
     border-radius: 6px;
-    box-shadow: 0 12px 30px -8px rgba(36, 26, 28, .45);
+    box-shadow: 0 12px 30px -8px var(--shadow);
 }
 .install-tip[hidden] { display: none; }
 .install-tip img { border-radius: 10px; flex: none; }
 .install-text { flex: 1; min-width: 0; }
 .install-text p { margin: 0; font-size: .92rem; line-height: 1.35; }
-.install-text .install-title { font-weight: 700; color: var(--navy); margin-bottom: .15rem; }
-.share-icon { vertical-align: -3px; color: var(--navy); }
+.install-text .install-title { font-weight: 700; color: var(--heading-alt); margin-bottom: .15rem; }
+.share-icon { vertical-align: -3px; color: var(--heading-alt); }
 .install-tip .install-btn { padding: .5rem .9rem; flex: none; }
 .install-close {
     position: absolute;
@@ -562,7 +604,7 @@ button.btn { font: inherit; font-weight: 700; cursor: pointer; }
     line-height: 1;
     cursor: pointer;
 }
-.install-close:focus-visible { outline: 3px solid var(--navy); outline-offset: 0; }
+.install-close:focus-visible { outline: 3px solid var(--focus); outline-offset: 0; }
 
 /* Show only the instructions that apply to this phone and browser */
 .install-tip .install-step,
