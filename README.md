@@ -128,7 +128,7 @@ Offline support and the install tip also need the local web server, since browse
 
 ## Automated checks
 
-The **Site checks** workflow runs on every push to `main`, every Monday at 9 AM Eastern, and on demand (**Actions → Site checks → Run workflow**, where you can also pick a branch to check before merging). It has three jobs:
+The **Site checks** workflow runs on every pull request into `main` (including Dependabot's), every push to `main`, every Monday at 9 AM Eastern, and on demand (**Actions → Site checks → Run workflow**). A newer commit on a pull request cancels that PR's older run. It has three jobs:
 
 - **HTML validation** checks `index.html` and `404.html` with [html-validate](https://html-validate.org/). Rules are set in `.htmlvalidate.json`.
 - **Link check** checks every link with [lychee](https://lychee.cli.rs/), including in-page jump links like `#menu`. Settings are in `lychee.toml`. Facebook, Yelp, and TripAdvisor often block automated checkers even when their pages are fine, so those "blocked" responses are treated as OK.
@@ -143,7 +143,7 @@ npx html-validate index.html 404.html
 node .github/scripts/check-site.js
 ```
 
-The actions used by the workflow are pinned to full commit SHAs (with the version in a comment), and **Dependabot** (`.github/dependabot.yml`) opens a pull request each week when one has a newer release. Review and merge those like any other change. The Site checks workflow does not run on pull requests by itself, so before merging, run it on the PR's branch from the Actions tab (**Run workflow**).
+The actions used by the workflow are pinned to full commit SHAs (with the version in a comment), and **Dependabot** (`.github/dependabot.yml`) opens a pull request each week when one has a newer release. Review and merge those like any other change; the Site checks run on them automatically.
 
 GitHub pauses scheduled workflows after 60 days without commits. If that happens, re-enable it from the Actions tab.
 
