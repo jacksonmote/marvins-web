@@ -20,6 +20,7 @@
 
 - Full menu with prices, half-size options, and a featured GCB section
 - Daily specials, hours, and a Google Map that loads automatically when a visitor scrolls near the Location section, so visitors who don't scroll that far load nothing from Google (when the map does load, Google may set its own cookies)
+- A short "unofficial fan site" note in the hero that links to Marvin's Facebook page for official news, alongside the full disclaimer at the bottom of the page
 - Category bar that stays pinned while scrolling the menu
 - Tap-to-call buttons, including a call bar pinned to the bottom of the screen on phones
 - "Get directions" buttons that open Google Maps with Marvin's as the destination
