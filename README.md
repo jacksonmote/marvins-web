@@ -41,7 +41,7 @@
 - Web app manifest and home-screen icons made from the banner
 - Offline support through a service worker that always loads the live site when online, so menu and price changes show up right away
 - Content Security Policy and referrer policy on both pages, so only the site's own files and the Google Maps embed can load
-- Automated HTML validation, link checking, and site-file checks, run weekly and after every push to `main` (see [Automated checks](#automated-checks))
+- Automated HTML validation, link checking, and site-file checks, run on every pull request into `main`, after every push to `main`, and weekly (see [Automated checks](#automated-checks))
 
 ## Technologies used
 
@@ -93,6 +93,8 @@ Everything below is in `index.html` unless noted.
 
 **Daily specials.** Each day is a `<li>` inside `<ul class="specials">`. The specials row is sized for four days in `styles.css` (`grid-template-columns: repeat(4, 1fr)`), so change that number if you add or remove a day.
 
+**Unofficial-site notice.** The hero has a short "unofficial fan site" note (`<p class="unofficial-note">`) linking to Marvin's Facebook page, and the `print-header` block has a matching line for the printed menu. If you reword one, update the other and keep the full disclaimer in the footer.
+
 **Hours.** Hours appear in three places that need to match:
 
 1. The table in the `#hours` section, which visitors see
@@ -102,6 +104,8 @@ Everything below is in `index.html` unless noted.
 **Address or phone.** These also appear in several places: the hero and contact buttons, the pinned call bar (in both `index.html` and `404.html`), the print header, the "Get directions" links, the map, and the structured data. Search the files for the old value to find them all.
 
 **New outside services.** The pages have a Content-Security-Policy (a `<meta http-equiv="Content-Security-Policy">` tag near the top of `<head>`) that only allows the site's own files and the Google Maps embed. If you add another embed, analytics, a font host, or anything else loaded from outside, add its address to the policy on **both** `index.html` and `404.html`, or browsers will block it. The same goes for inline scripts, inline styles, and `style="..."` attributes: put them in `app.js` or `styles.css` instead.
+
+**Fonts.** The Bowlby One and Libre Franklin (400, 600, 700) font files are preloaded with `<link rel="preload">` tags near the top of `index.html`'s `<head>`, so the text doesn't jump when the fonts load. If you rename or replace a font file, update its preload tag, the `@font-face` rule in `styles.css`, and `PRECACHE` in `sw.js`.
 
 **Adding images or other files.** Offline support saves a fixed list of files, set in `PRECACHE` at the top of `sw.js`. If you add a new image or file the page depends on, add it to that list and change `CACHE_VERSION` (for example, `v1` to `v2`) so phones pick up the new list. Editing existing files, including menu and price changes, needs nothing extra.
 
