@@ -328,12 +328,28 @@ main > section, .visit { margin-top: clamp(3rem, 8vw, 5.5rem); }
 address { font-style: normal; font-size: 1.2rem; font-weight: 600; }
 .muted { color: var(--muted); margin: .25rem 0 1.25rem; }
 
-#location iframe {
+#location iframe, .map-frame {
     display: block;
     width: 100%;
     height: 320px;
     border: 6px solid var(--paper);
 }
+
+/* Stands in for the map until app.js loads it, just before the section scrolls into view */
+.map-frame {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    padding: 1rem;
+    text-align: center;
+    background: #efe3da;
+}
+.map-frame p { margin: 0; }
+.map-title { font-family: var(--display); color: var(--navy); font-size: 1.1rem; }
+.map-status { color: var(--muted); font-size: .92rem; }
+.map-status:empty { display: none; }
 
 /* ---------- Contact ---------- */
 .contact { margin-bottom: 4rem; }
@@ -391,7 +407,7 @@ footer .tagline {
     .items { columns: 1; }
     .signature { flex-direction: column; align-items: flex-start; }
     .sig-price { text-align: left; }
-    #location iframe { height: 280px; }
+    #location iframe, .map-frame { height: 280px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

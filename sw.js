@@ -6,7 +6,7 @@
  *
  * Bump CACHE_VERSION only when the PRECACHE list below changes.
  */
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE = `marvins-${CACHE_VERSION}`;
 const NETWORK_TIMEOUT_MS = 4000;
 
@@ -17,9 +17,13 @@ const PRECACHE = [
   '/404.html',
   '/manifest.webmanifest',
   '/assets/Marvins-1200x600.jpg',
+  '/assets/Marvins-480x240.webp',
+  '/assets/Marvins-800x400.webp',
+  '/assets/Marvins-1200x600.webp',
   '/favicon.ico',
   '/assets/favicon-192.png',
   '/assets/apple-touch-icon.png',
+  '/assets/install-tip-icon.webp',
   '/assets/icon-192.png',
   '/assets/icon-512.png',
   '/assets/icon-maskable-512.png',

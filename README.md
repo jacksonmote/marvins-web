@@ -19,7 +19,7 @@
 **For visitors**
 
 - Full menu with prices, half-size options, and a featured GCB section
-- Daily specials, hours, and an embedded Google Map
+- Daily specials, hours, and a Google Map that loads automatically when a visitor scrolls near the Location section, so visitors who don't scroll that far load nothing from Google (when the map does load, Google may set its own cookies)
 - Category bar that stays pinned while scrolling the menu
 - Tap-to-call buttons, including a call bar pinned to the bottom of the screen on phones
 - "Get directions" buttons that open Google Maps with Marvin's as the destination
@@ -48,11 +48,11 @@ The site is plain HTML and CSS with no framework, no build step, and no dependen
 
 - **HTML5** for the page structure, with semantic landmarks for accessibility
 - **CSS3** for all styling: custom properties for the color palette, CSS Grid and Flexbox for layout, a sticky menu bar, and a print stylesheet for the printable menu
-- **JavaScript** (no libraries) for the print button, offline support, app-mode detection, and the install tip
+- **JavaScript** (no libraries) for the print button, the scroll-triggered map, offline support, app-mode detection, and the install tip
 - **Web App Manifest** so phones can install the site to the home screen
 - **Service Worker and Cache API** for offline support
 - **Self-hosted web fonts** (WOFF2 files in `assets/fonts/`): Bowlby One for headings and Libre Franklin for body text. Both are licensed under the SIL Open Font License (see `assets/fonts/OFL.txt`), and nothing is loaded from Google Fonts
-- **Google Maps** embed for the location map, and Google Maps links for directions
+- **Google Maps** embed for the location map (loaded when the Location section is about to scroll into view, not on page load), and Google Maps links for directions
 - **Schema.org structured data (JSON-LD)** so search engines can read hours, address, and phone
 - **Open Graph and Twitter Card tags** for link previews
 - **Content Security Policy and referrer policy** (meta tags on both pages) so the pages can only load their own files plus the Google Maps embed, with no inline scripts or styles
@@ -71,11 +71,11 @@ sitemap.xml                      Lists the page for search engines
 CNAME                            Points GitHub Pages at marvinsgreencastle.com
 .nojekyll                        Tells GitHub Pages to serve the files as-is (no Jekyll processing)
 LICENSE                          MIT license for the code (see License)
-app.js                           Print button, offline setup, app-mode detection, and the install tip; loaded by both pages
+app.js                           Print button, scroll-to-load map, offline setup, app-mode detection, and the install tip; loaded by both pages
 sw.js                            Service worker: saves the site for offline use
 manifest.webmanifest             App name, colors, and icons for home-screen installs
 favicon.ico                      Browser-tab and Google search icon (16, 32, and 48 px)
-assets/                          Banner image, large favicon, and home-screen icons
+assets/                          Banner (JPEG plus 480, 800, and 1200 px WebP versions), install-tip icon (install-tip-icon.webp), large favicon, and home-screen icons
 assets/fonts/                    Self-hosted WOFF2 fonts (Bowlby One, Libre Franklin) and their OFL license
 .github/workflows/site-checks.yml  Automated HTML, link, and site-file checks
 .github/scripts/check-site.js    Checks offline files, manifest, structured data, and local file references
@@ -103,6 +103,10 @@ Everything below is in `index.html` unless noted.
 **New outside services.** The pages have a Content-Security-Policy (a `<meta http-equiv="Content-Security-Policy">` tag near the top of `<head>`) that only allows the site's own files and the Google Maps embed. If you add another embed, analytics, a font host, or anything else loaded from outside, add its address to the policy on **both** `index.html` and `404.html`, or browsers will block it. The same goes for inline scripts, inline styles, and `style="..."` attributes: put them in `app.js` or `styles.css` instead.
 
 **Adding images or other files.** Offline support saves a fixed list of files, set in `PRECACHE` at the top of `sw.js`. If you add a new image or file the page depends on, add it to that list and change `CACHE_VERSION` (for example, `v1` to `v2`) so phones pick up the new list. Editing existing files, including menu and price changes, needs nothing extra.
+
+**Banner.** The hero uses `assets/Marvins-1200x600.jpg` plus WebP copies at 480, 800, and 1200 px wide (`Marvins-480x240.webp`, `Marvins-800x400.webp`, `Marvins-1200x600.webp`) so phones download a smaller file. The JPEG is the fallback and the link-preview image. If the banner is ever replaced, regenerate all three WebP sizes (keep the 2:1 shape and the same names) as well as the JPEG. The install tip's icon (`assets/install-tip-icon.webp`, 88 px) is a resized copy of `apple-touch-icon.png`; regenerate it if that icon changes.
+
+**Map.** The Google Maps address is stored in the `data-map-src` attribute of the `.map-frame` block in the Location section. `app.js` builds the iframe from it shortly before the section scrolls into view (or right away in browsers without IntersectionObserver). Until then a placeholder with an "Open in Google Maps" link stands in, which is also what shows without JavaScript.
 
 **Home-screen icons.** The icons in `assets/` (`apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, and `icon-maskable-512.png`) are crops of the banner. If you replace them, keep the same file names and sizes. The maskable version needs Marvin's face inside the center 80%, because Android trims the edges into circles and other shapes.
 

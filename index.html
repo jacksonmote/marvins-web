@@ -104,7 +104,10 @@
                 </div>
             </div>
             <figure class="poster">
-                <img src="assets/Marvins-1200x600.jpg" fetchpriority="high" alt="Hand-painted Marvin for President banner" width="1200" height="600">
+                <picture>
+                    <source type="image/webp" srcset="assets/Marvins-480x240.webp 480w, assets/Marvins-800x400.webp 800w, assets/Marvins-1200x600.webp 1200w" sizes="(min-width: 901px) 500px, calc(100vw - 2.75rem)">
+                    <img src="assets/Marvins-1200x600.jpg" fetchpriority="high" alt="Hand-painted Marvin for President banner" width="1200" height="600">
+                </picture>
             </figure>
         </section>
 
@@ -431,8 +434,12 @@
                 <address>202 S College Ave<br>Greencastle, IN 46135</address>
                 <p class="muted">Near The Inn at DePauw University</p>
                 <p><a class="btn btn-primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=Marvin%27s%2C+202+S+College+Ave%2C+Greencastle%2C+IN+46135" target="_blank" rel="noopener">Get directions</a></p>
-                <!--Embed Google Maps for 202 S College Ave, Greencastle, IN, 46135-->
-                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6144.657262571234!2d-86.86278900000002!3d39.642318!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x886cdfad2e1a4cc9%3A0x98980828eff327f!2sMarvin&#39;s!5e0!3m2!1sen!2sus!4v1726480991145!5m2!1sen!2sus" title="Map to Marvin's at 202 S College Ave" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <!--Google Maps embed for 202 S College Ave, Greencastle, IN, 46135; app.js loads it shortly before this section scrolls into view; the link is the fallback without JavaScript-->
+                <div class="map-frame" data-map-src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6144.657262571234!2d-86.86278900000002!3d39.642318!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x886cdfad2e1a4cc9%3A0x98980828eff327f!2sMarvin&#39;s!5e0!3m2!1sen!2sus!4v1726480991145!5m2!1sen!2sus">
+                    <p class="map-title">Map of 202 S College Ave, Greencastle</p>
+                    <p><a href="https://www.google.com/maps/dir/?api=1&amp;destination=Marvin%27s%2C+202+S+College+Ave%2C+Greencastle%2C+IN+46135" target="_blank" rel="noopener">Open in Google Maps</a></p>
+                    <p class="map-status" role="status"></p>
+                </div>
             </section>
         </div>
 
@@ -451,7 +458,7 @@
 
     <!-- Install tip: shown by app.js on phones that can add the site to the home screen -->
     <aside id="install-tip" class="install-tip" aria-label="Install Marvin's" hidden>
-        <img src="/assets/apple-touch-icon.png" alt="" width="44" height="44">
+        <img src="/assets/install-tip-icon.webp" alt="" width="44" height="44" loading="lazy">
         <div class="install-text">
             <p class="install-title">Add Marvin's to your home screen</p>
             <p class="install-step step-safari">Tap <svg class="share-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 12v8h14v-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> <strong>Share</strong> (on iOS 26 it&rsquo;s under <strong>&hellip;</strong>), then <strong>Add to Home Screen</strong>.</p>
