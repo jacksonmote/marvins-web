@@ -73,6 +73,7 @@ sitemap.xml                      Lists the page for search engines
 CNAME                            Points GitHub Pages at marvinsgreencastle.com
 .nojekyll                        Tells GitHub Pages to serve the files as-is (no Jekyll processing)
 LICENSE                          MIT license for the code (see License)
+AGENTS.md                        How to work on the repo (change checklist and rules that must not break), for people and coding agents
 app.js                           Print button, scroll-to-load map, offline setup, app-mode detection, and the install tip; loaded by both pages
 sw.js                            Service worker: saves the site for offline use
 manifest.webmanifest             App name, colors, and icons for home-screen installs
@@ -88,7 +89,7 @@ lychee.toml                      Settings for the link check
 
 ## Updating the site
 
-Everything below is in `index.html` unless noted.
+Everything below is in `index.html` unless noted. Before opening a pull request, see the checklist and rules in [AGENTS.md](AGENTS.md).
 
 **Menu items and prices.** Each item is a `<li>` inside its category's `<section class="category">`. Copy an existing item and change the name, description, and price. Half sizes go in a `<p class="half">` line under the description. The GCB feature block near the top of the menu has its own price, so update it too if the GCB price changes.
 
