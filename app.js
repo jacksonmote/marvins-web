@@ -35,7 +35,6 @@
       frame.src = mapFrame.getAttribute('data-map-src');
       frame.title = "Map to Marvin's at 202 S College Ave";
       frame.setAttribute('allowfullscreen', '');
-      frame.referrerPolicy = 'no-referrer-when-downgrade';
       mapFrame.replaceWith(frame);
     };
 

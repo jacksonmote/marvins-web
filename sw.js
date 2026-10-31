@@ -4,7 +4,8 @@
  * the live site, so menu and price updates show up immediately. The saved
  * copy is only used when there's no connection (or it's too slow to answer).
  *
- * Bump CACHE_VERSION only when the PRECACHE list below changes.
+ * Bump CACHE_VERSION when the PRECACHE list below changes. Bump it also to
+ * clear every visitor's saved copies if a bad version was ever cached.
  */
 const CACHE_VERSION = 'v4';
 const CACHE = `marvins-${CACHE_VERSION}`;
@@ -32,6 +33,7 @@ const PRECACHE = [
   '/assets/fonts/libre-franklin-600.woff2',
   '/assets/fonts/libre-franklin-700.woff2'
 ];
+const PRECACHED = new Set(PRECACHE);
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -67,7 +69,10 @@ async function networkFirst(request) {
   const cache = await caches.open(CACHE);
   try {
     const response = await fetchWithTimeout(request);
-    if (response && response.ok) cache.put(request, response.clone());
+    // Only save the site's own listed files, and only complete responses
+    if (response && response.status === 200 && PRECACHED.has(new URL(request.url).pathname)) {
+      cache.put(request, response.clone()).catch(() => {});
+    }
     return response;
   } catch (err) {
     const cached = await cache.match(request, { ignoreSearch: true });

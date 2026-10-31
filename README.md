@@ -83,6 +83,7 @@ assets/fonts/                    Self-hosted WOFF2 fonts (Bowlby One, Libre Fran
 .github/workflows/site-checks.yml  Automated HTML, link, and site-file checks
 .github/scripts/check-site.js    Checks offline files, manifest, structured data, and local file references
 .github/dependabot.yml           Weekly pull requests when a pinned GitHub Action has an update
+.github/SECURITY.md              How to report a security problem privately
 .htmlvalidate.json               Settings for the HTML check
 lychee.toml                      Settings for the link check
 ```
@@ -107,11 +108,11 @@ Everything below is in `index.html` unless noted. Before opening a pull request,
 
 **Address or phone.** These also appear in several places: the hero and contact buttons, the pinned call bar (in both `index.html` and `404.html`), the print header, the "Get directions" links, the map, and the structured data. Search the files for the old value to find them all.
 
-**New outside services.** The pages have a Content-Security-Policy (a `<meta http-equiv="Content-Security-Policy">` tag near the top of `<head>`) that only allows the site's own files and the Google Maps embed. If you add another embed, analytics, a font host, or anything else loaded from outside, add its address to the policy on **both** `index.html` and `404.html`, or browsers will block it. The same goes for inline scripts, inline styles, and `style="..."` attributes: put them in `app.js` or `styles.css` instead.
+**New outside services.** The pages have a Content-Security-Policy (a `<meta http-equiv="Content-Security-Policy">` tag near the top of `<head>`) that only allows the site's own files and the Google Maps embed (only the `/maps/embed` address on google.com can be framed). If you add another embed, analytics, a font host, or anything else loaded from outside, add its address to the policy on **both** `index.html` and `404.html`, or browsers will block it. The same goes for inline scripts, inline styles, and `style="..."` attributes: put them in `app.js` or `styles.css` instead.
 
 **Fonts.** The Bowlby One and Libre Franklin (400, 600, 700) font files are preloaded with `<link rel="preload">` tags near the top of `index.html`'s `<head>`, so the text doesn't jump when the fonts load. If you rename or replace a font file, update its preload tag, the `@font-face` rule in `styles.css`, and `PRECACHE` in `sw.js`.
 
-**Adding images or other files.** Offline support saves a fixed list of files, set in `PRECACHE` at the top of `sw.js`. If you add a new image or file the page depends on, add it to that list and change `CACHE_VERSION` (for example, `v1` to `v2`) so phones pick up the new list. Editing existing files, including menu and price changes, needs nothing extra.
+**Adding images or other files.** Offline support saves a fixed list of files, set in `PRECACHE` at the top of `sw.js`. If you add a new image or file the page depends on, add it to that list and change `CACHE_VERSION` (for example, `v1` to `v2`) so phones pick up the new list. Offline support only saves files from that list. Bumping `CACHE_VERSION` also clears every phone's saved copies, which is the quick fix if a broken page was ever saved. Editing existing files, including menu and price changes, needs nothing extra.
 
 **Banner.** The hero uses `assets/Marvins-1200x600.jpg` plus WebP copies at 480, 800, and 1200 px wide (`Marvins-480x240.webp`, `Marvins-800x400.webp`, `Marvins-1200x600.webp`) so phones download a smaller file. The JPEG is the fallback and the link-preview image. If the banner is ever replaced, regenerate all three WebP sizes (keep the 2:1 shape and the same names) as well as the JPEG. The install tip's icon (`assets/install-tip-icon.webp`, 88 px) is a resized copy of `apple-touch-icon.png`; regenerate it if that icon changes.
 
@@ -156,7 +157,7 @@ npx html-validate index.html 404.html
 node .github/scripts/check-site.js
 ```
 
-The actions used by the workflow are pinned to full commit SHAs (with the version in a comment), and **Dependabot** (`.github/dependabot.yml`) opens a pull request each week when one has a newer release. Review and merge those like any other change; the Site checks run on them automatically.
+The actions used by the workflow are pinned to full commit SHAs (with the version in a comment), html-validate is pinned to an exact version in the workflow (raise it by hand), and **Dependabot** (`.github/dependabot.yml`) opens a pull request each week when one has a newer release. Review and merge those like any other change; the Site checks run on them automatically.
 
 GitHub pauses scheduled workflows after 60 days without commits. If that happens, re-enable it from the Actions tab.
 
