@@ -14,6 +14,10 @@ timeout = 30
 # Treat links to a folder (like "/#menu" on the 404 page) as that folder's index.html.
 index_files = ["index.html"]
 
-# This link points at the privacy page's source on GitHub, which does not exist
-# on main until the page is merged, so it is skipped. Remove once it has merged.
-exclude = ["^https://github\\.com/jacksonmote/marvins-web/blob/main/privacy/index\\.html$"]
+# These two links point at the privacy page itself (its canonical URL and its source
+# on GitHub), which do not exist until the page is merged and deployed, so they are
+# skipped. Remove this once the page is live.
+exclude = [
+  '^https://marvinsgreencastle\.com/privacy/$',
+  '^https://github\.com/jacksonmote/marvins-web/blob/main/privacy/index\.html$',
+]
