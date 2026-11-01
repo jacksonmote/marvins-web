@@ -28,6 +28,7 @@
 - Printable menu: the "Print the menu" button (or Ctrl+P / Cmd+P) produces a clean two-page, black-and-white menu with address, phone, and hours
 - Links to Facebook, Yelp, TripAdvisor, goputnam.com, and Marvin's merchandise on Etsy
 - Custom 404 page for mistyped addresses
+- Plain-language privacy page at `/privacy/`, linked from every page's footer: no cookies, analytics, ads, or trackers, plus what Google Maps and GitHub (the host) do.
 - Installable on phones: add it to the home screen and it opens full-screen like an app, with its own Marvin's icon
 - Works offline once visited: the menu, prices, and hours load with no signal (the map needs a connection)
 - Install tip that shows each phone the right steps: Safari and Chrome on iPhone get Share-menu instructions, and Android gets an Install button
@@ -41,7 +42,7 @@
 - Accessibility checked with axe and Lighthouse (no issues found)
 - Web app manifest and home-screen icons made from the banner
 - Offline support through a service worker that always loads the live site when online, so menu and price changes show up right away
-- Content Security Policy and referrer policy on both pages, so only the site's own files and the Google Maps embed can load
+- Content Security Policy and referrer policy on every page, so only the site's own files and the Google Maps embed can load
 - Automated HTML validation, link checking, and site-file checks, run on every pull request into `main`, after every push to `main`, and weekly (see [Automated checks](#automated-checks))
 
 ## Technologies used
@@ -57,7 +58,7 @@ The site is plain HTML and CSS with no framework, no build step, and no dependen
 - **Google Maps** embed for the location map (loaded when the Location section is about to scroll into view, not on page load), and Google Maps links for directions
 - **Schema.org structured data (JSON-LD)** so search engines can read hours, address, and phone
 - **Open Graph and Twitter Card tags** for link previews
-- **Content Security Policy and referrer policy** (meta tags on both pages) so the pages can only load their own files plus the Google Maps embed, with no inline scripts or styles
+- **Content Security Policy and referrer policy** (meta tags on every page) so the pages can only load their own files plus the Google Maps embed, with no inline scripts or styles
 - **GitHub Actions** to run the automated checks, with each action pinned to a full commit SHA and kept current by Dependabot
 - **html-validate** and **lychee** for HTML validation and link checking
 - **axe** and **Lighthouse** for accessibility and performance auditing
@@ -66,22 +67,23 @@ The site is plain HTML and CSS with no framework, no build step, and no dependen
 
 ```
 index.html                       The whole site: menu, specials, hours, location, contact
-styles.css                       All styling, including the print layout; shared by index.html and 404.html
+styles.css                       All styling, including the print layout; shared by every page
 404.html                         Page shown for any address that doesn't exist
+privacy/index.html               Privacy policy, served at /privacy/ (the only place the privacy contact email appears)
 robots.txt                       Tells search engines they can crawl the site
-sitemap.xml                      Lists the page for search engines
+sitemap.xml                      Lists the pages for search engines
 CNAME                            Points GitHub Pages at marvinsgreencastle.com
 .nojekyll                        Tells GitHub Pages to serve the files as-is (no Jekyll processing)
 LICENSE                          MIT license for the code (see License)
 AGENTS.md                        How to work on the repo (change checklist and rules that must not break), for people and coding agents
-app.js                           Print button, scroll-to-load map, offline setup, app-mode detection, and the install tip; loaded by both pages
+app.js                           Print button, scroll-to-load map, offline setup, app-mode detection, and the install tip; loaded by index.html and 404.html (the privacy page runs no script)
 sw.js                            Service worker: saves the site for offline use
 manifest.webmanifest             App name, colors, and icons for home-screen installs
 favicon.ico                      Browser-tab and Google search icon (16, 32, and 48 px)
 assets/                          Banner (JPEG plus 480, 800, and 1200 px WebP versions), install-tip icon (install-tip-icon.webp), large favicon, and home-screen icons
 assets/fonts/                    Self-hosted WOFF2 fonts (Bowlby One, Libre Franklin) and their OFL license
 .github/workflows/site-checks.yml  Automated HTML, link, and site-file checks
-.github/scripts/check-site.js    Checks offline files, manifest, structured data, and local file references
+.github/scripts/check-site.js    Checks offline files, manifest, structured data, local file references, privacy links, and outside requests
 .github/dependabot.yml           Weekly pull requests when a pinned GitHub Action has an update
 .github/SECURITY.md              How to report a security problem privately
 .htmlvalidate.json               Settings for the HTML check
@@ -108,9 +110,9 @@ Everything below is in `index.html` unless noted. Before opening a pull request,
 
 **Address or phone.** These also appear in several places: the hero and contact buttons, the pinned call bar (in both `index.html` and `404.html`), the print header, the "Get directions" links, the map, and the structured data. Search the files for the old value to find them all.
 
-**New outside services.** The pages have a Content-Security-Policy (a `<meta http-equiv="Content-Security-Policy">` tag near the top of `<head>`) that only allows the site's own files and the Google Maps embed (only the `/maps/embed` address on google.com can be framed). If you add another embed, analytics, a font host, or anything else loaded from outside, add its address to the policy on **both** `index.html` and `404.html`, or browsers will block it. The same goes for inline scripts, inline styles, and `style="..."` attributes: put them in `app.js` or `styles.css` instead.
+**New outside services.** The pages have a Content-Security-Policy (a `<meta http-equiv="Content-Security-Policy">` tag near the top of `<head>`) that only allows the site's own files and the Google Maps embed (only the `/maps/embed` address on google.com can be framed). If you add another embed, analytics, a font host, or anything else loaded from outside, add its address to the policy on **every** page (`index.html`, `404.html`, and `privacy/index.html`), or browsers will block it. `check-site.js` fails if any page's policy allows an outside address other than the Google Maps embed, so update that check too, along with the privacy page (see below). The same goes for inline scripts, inline styles, and `style="..."` attributes: put them in `app.js` or `styles.css` instead.
 
-**Fonts.** The Bowlby One and Libre Franklin (400, 600, 700) font files are preloaded with `<link rel="preload">` tags near the top of `index.html`'s `<head>`, so the text doesn't jump when the fonts load. If you rename or replace a font file, update its preload tag, the `@font-face` rule in `styles.css`, and `PRECACHE` in `sw.js`.
+**Fonts.** The Bowlby One and Libre Franklin (400, 600, 700) font files are preloaded with `<link rel="preload">` tags near the top of the `<head>` in `index.html` and `privacy/index.html`, so the text doesn't jump when the fonts load. If you rename or replace a font file, update its preload tags, the `@font-face` rule in `styles.css`, and `PRECACHE` in `sw.js`.
 
 **Adding images or other files.** Offline support saves a fixed list of files, set in `PRECACHE` at the top of `sw.js`. If you add a new image or file the page depends on, add it to that list and change `CACHE_VERSION` (for example, `v1` to `v2`) so phones pick up the new list. Offline support only saves files from that list. Bumping `CACHE_VERSION` also clears every phone's saved copies, which is the quick fix if a broken page was ever saved. Editing existing files, including menu and price changes, needs nothing extra.
 
@@ -124,19 +126,21 @@ Everything below is in `index.html` unless noted. Before opening a pull request,
 
 **Install tip wording.** The instructions for each browser are in `index.html`, in the `install-tip` block near the bottom. `app.js` decides which version each phone sees.
 
+**Privacy page.** `privacy/index.html` is a plain-language policy that has to stay true. If a change adds a script, analytics, cookies, storage, an embed, or any third-party request, update the privacy page text and its "Last updated" date (the `<time datetime>` element) in the same pull request, and set the `privacy/` `<lastmod>` in `sitemap.xml` to match. The privacy contact email appears on that page only, never in the footer, README, or elsewhere. Every page's footer links to `/privacy/` (the privacy page shows "Privacy" as plain text with `aria-current="page"`), and `check-site.js` fails if a footer link is missing, the email shows up on another page, or a page loads anything from another origin besides the Google Maps embed.
+
 **After any content change**, update the `<lastmod>` date in `sitemap.xml` to the current date so search engines know to re-check the page.
 
 ## Previewing locally
 
 Open `index.html` in any browser to check your content changes. To preview the printed menu, use your browser's Print Preview (Ctrl+P). The page links to `app.js` and the icons with paths that start with `/`, so the **Print the menu** button, offline support, and the install tip only work through the local web server below.
 
-`404.html` uses paths that start with `/`, so it only looks right when served from a local web server. From the project folder, run:
+`404.html` and `privacy/index.html` use paths that start with `/`, so they only look right when served from a local web server. From the project folder, run:
 
 ```bash
 python -m http.server
 ```
 
-Then visit `http://localhost:8000/404.html`.
+Then visit `http://localhost:8000/404.html` or `http://localhost:8000/privacy/`.
 
 Offline support and the install tip also need the local web server, since browsers only allow them on `https://` sites and `localhost`. After a change, if the page looks out of date, do a hard refresh (Ctrl+Shift+R, or Cmd+Shift+R on Mac) so the browser skips its saved copy. To test offline mode, open the page once, stop the server, and reload.
 
@@ -144,16 +148,16 @@ Offline support and the install tip also need the local web server, since browse
 
 The **Site checks** workflow runs on every pull request into `main` (including Dependabot's), every push to `main`, every Monday at 9 AM Eastern, and on demand (**Actions → Site checks → Run workflow**). A newer commit on a pull request cancels that PR's older run. It has three jobs:
 
-- **HTML validation** checks `index.html` and `404.html` with [html-validate](https://html-validate.org/). Rules are set in `.htmlvalidate.json`.
-- **Link check** checks every link with [lychee](https://lychee.cli.rs/), including in-page jump links like `#menu`. Settings are in `lychee.toml`. Facebook, Yelp, and TripAdvisor often block automated checkers even when their pages are fine, so those "blocked" responses are treated as OK.
-- **Site files** runs `.github/scripts/check-site.js`, which fails if a file listed in `PRECACHE` (in `sw.js`) is missing, `manifest.webmanifest` or the structured data in `index.html` is not valid JSON, a manifest icon is missing, or a local file referenced by `href` or `src` in either page does not exist.
+- **HTML validation** checks `index.html`, `404.html`, and `privacy/index.html` with [html-validate](https://html-validate.org/). Rules are set in `.htmlvalidate.json`.
+- **Link check** checks every link with [lychee](https://lychee.cli.rs/), including in-page jump links like `#menu`. Settings are in `lychee.toml`, which also skips the privacy page's "source" link on GitHub until that page exists on `main`. Facebook, Yelp, and TripAdvisor often block automated checkers even when their pages are fine, so those "blocked" responses are treated as OK.
+- **Site files** runs `.github/scripts/check-site.js`, which fails if a file listed in `PRECACHE` (in `sw.js`) is missing, `manifest.webmanifest` or the structured data in `index.html` is not valid JSON, a manifest icon is missing, or a local file referenced by `href` or `src` in a page does not exist. It also fails if a page's footer doesn't link to `/privacy/`, the privacy contact email appears anywhere but the privacy page, or a page (or `styles.css`) loads something from another origin other than the Google Maps embed.
 
 If a check fails, GitHub emails the repo owner. Open the failed run in the Actions tab to see which line or link caused it.
 
 To run the HTML and site-file checks locally (requires Node.js):
 
 ```bash
-npx html-validate index.html 404.html
+npx html-validate index.html 404.html privacy/index.html
 node .github/scripts/check-site.js
 ```
 

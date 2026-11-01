@@ -8,7 +8,7 @@ Unofficial fan website for Marvin's restaurant in Greencastle, Indiana: plain HT
 ## Checklist for every change
 1. Branch from the latest `main`. One PR per change.
 2. Run the same checks CI runs:
-   - `npx html-validate index.html 404.html`
+   - `npx html-validate index.html 404.html privacy/index.html`
    - `node .github/scripts/check-site.js`
    - The link check (lychee, config in `lychee.toml`) runs in CI only.
 3. For visible changes, preview over `python -m http.server` (opening files from disk won't load `app.js`) at phone and desktop widths, in light and dark mode, and in Print Preview. Stop the server afterward.
@@ -17,12 +17,13 @@ Unofficial fan website for Marvin's restaurant in Greencastle, Indiana: plain HT
 6. Update README.md in the same PR when features, technologies, file structure, or how-to notes change.
 7. After content changes, update `<lastmod>` in `sitemap.xml`.
 8. If you add a file the page depends on (image, font, etc.), add it to `PRECACHE` in `sw.js` and bump `CACHE_VERSION`.
-9. Keep each file's line endings as they are (`git ls-files --eol`): CRLF for index.html, 404.html, styles.css, app.js, sw.js, robots.txt, sitemap.xml, and assets/fonts/OFL.txt; LF for everything else. Edit with byte-safe tools; a tool that rewrites whole files can change line endings or empty a file.
+9. Keep each file's line endings as they are (`git ls-files --eol`): CRLF for index.html, 404.html, privacy/index.html, styles.css, app.js, sw.js, robots.txt, sitemap.xml, and assets/fonts/OFL.txt; LF for everything else. Edit with byte-safe tools; a tool that rewrites whole files can change line endings or empty a file.
 
 ## Invariants (never break)
 - **Disclaimer.** The footer disclaimer stays on every page. The hero "unofficial fan site" note and the matching print-header line stay too; if one is reworded, update the other.
-- **No third-party requests** except the Google Maps embed, which loads only when the Location section is about to scroll into view. Fonts are self-hosted WOFF2; never use Google Fonts. The three Libre Franklin fonts are preloaded in `index.html`; if a font file is renamed, update the preloads, `@font-face`, and `PRECACHE`.
-- **Strict CSP** (meta tag) on both pages. `index.html` allows the Maps iframe; `404.html` has `frame-src 'none'`. No inline scripts, inline styles, `style=""` attributes, or inline event handlers: put code in `app.js` and styling in `styles.css`. Any new outside service (embed, analytics, font host) must be added to the CSP on both pages.
+- **No third-party requests** except the Google Maps embed, which loads only when the Location section is about to scroll into view. Fonts are self-hosted WOFF2; never use Google Fonts. The fonts are preloaded in `index.html` and `privacy/index.html` (so text doesn't shift when they load); if a font file is renamed, update the preloads, `@font-face`, and `PRECACHE`.
+- **Strict CSP** (meta tag) on every page. `index.html` allows the Maps iframe; `404.html` and `privacy/index.html` have `frame-src 'none'`. No inline scripts, inline styles, `style=""` attributes, or inline event handlers: put code in `app.js` and styling in `styles.css`. Any new outside service (embed, analytics, font host) must be added to the CSP on every page.
+- **Privacy page stays true.** `privacy/index.html` describes what the site does. Adding a script, analytics, cookies, storage, an embed, or any third-party request means updating its text and "Last updated" date (and its `sitemap.xml` `<lastmod>`) in the same PR. Every page's footer links to `/privacy/`. The privacy contact email appears on that page only. `check-site.js` enforces the footer link, the email rule, and "no outside origin except the Google Maps embed".
 - **Numbers that must match everywhere:**
   - GCB price: the feature block at the top of the menu and the Sandwiches list.
   - Hours: the `#hours` table, the print-header block, and `openingHoursSpecification` in the structured data.
