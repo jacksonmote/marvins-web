@@ -389,7 +389,7 @@ address { font-style: normal; font-size: 1.2rem; font-weight: 600; }
 .map-status:empty { display: none; }
 
 /* ---------- Contact ---------- */
-.contact { margin-bottom: 4rem; }
+.contact { margin-top: clamp(2rem, 5vw, 2.5rem); margin-bottom: 4rem; }
 .phone { margin: 0 0 1rem; }
 .phone a {
     font-family: var(--display);
