@@ -181,14 +181,17 @@ The website has no dependencies, but the checks do. html-validate and Lighthouse
 
 The actions used by the workflows (Site checks and Lighthouse) are pinned to full commit SHAs, with the version in a comment. Each week, **Dependabot** (`.github/dependabot.yml`) opens a pull request when a pinned action has a newer release that has been out for at least 7 days. To review one, check that it changes only the pinned SHA and version comment, read the release notes it links to, and merge it if the Site checks and Lighthouse runs pass.
 
-**Updating the CI tools by hand.** Dependabot can't open pull requests for the tools right now: GitHub rejects the pull requests it tries to open for `.github/tools/`. So its version updates for the tools are turned off (`open-pull-requests-limit: 0`). Dependabot alerts still cover the lockfile, so known security problems in the tools show up under the repo's **Security** tab. Dependabot still tries to open a security fix for a new alert, and that attempt shows up as a failed Dependabot run in the Actions tab; it's expected, and the fix is to update by hand. When there's a newer release, or an alert that a newer release fixes:
+**Updating the CI tools by hand.** Dependabot can't open pull requests for the tools right now: GitHub rejects the pull requests it tries to open for `.github/tools/`. So its version updates for the tools are turned off (`open-pull-requests-limit: 0`). Dependabot alerts still cover the lockfile, so known security problems in the tools show up under the repo's **Security** tab. Dependabot still tries to open a security fix for a new alert, and that attempt shows up as a failed Dependabot run in the Actions tab. That failure is expected; make the update by hand instead. When there's a newer release, or an alert that a newer release fixes:
 
-1. Check what's newer and when it came out, and wait until a release has been out for at least 14 days (a bad release is usually caught and withdrawn by then):
+1. With the tools installed (see above), check what's newer and when each release came out:
 
    ```bash
    npm outdated --prefix .github/tools
    npm view @lhci/cli time --json
+   npm view html-validate time --json
    ```
+
+   Wait until a release has been out for at least 14 days, since a bad release is usually caught and withdrawn by then. The one exception is a release that fixes a serious security alert; that can go ahead sooner, after reading its release notes.
 
 2. On a new branch, set the new exact version (no `^`) in `.github/tools/package.json`, then update the lockfile with Node.js 22, the version CI uses. This doesn't run any package scripts:
 
