@@ -62,7 +62,7 @@ The site is plain HTML and CSS with no framework, no build step, and no dependen
 - **Content Security Policy and referrer policy** (meta tags on every page) so the pages can only load their own files plus the Google Maps embed, with no inline scripts or styles
 - **GitHub Actions** to run the automated checks, with each action pinned to a full commit SHA and kept current by Dependabot
 - **html-validate** and **lychee** for HTML validation and link checking
-- **npm** (CI only) to install html-validate and Lighthouse CI from a lockfile in `.github/tools/`, with package install scripts blocked; Dependabot proposes updates to them
+- **npm** (CI only) to install html-validate and Lighthouse CI from a lockfile in `.github/tools/`, with package install scripts blocked; Dependabot alerts cover them
 - **axe** and **Lighthouse** for accessibility and performance auditing, with **Lighthouse CI** running Lighthouse automatically in GitHub Actions
 
 ## File structure
@@ -91,7 +91,7 @@ assets/fonts/                    Self-hosted WOFF2 fonts (Bowlby One, Libre Fran
 .github/tools/package.json       CI-only tools (html-validate, Lighthouse CI) at exact versions; not part of the website
 .github/tools/package-lock.json  Exact versions of those tools and everything they depend on
 .github/tools/.npmrc             Makes npm skip package install scripts for these tools
-.github/dependabot.yml           Weekly pull requests when a pinned GitHub Action or a CI tool has an update
+.github/dependabot.yml           Weekly pull requests when a pinned GitHub Action has an update (CI tool updates are off for now; see Automated checks)
 .github/SECURITY.md              How to report a security problem privately
 .htmlvalidate.json               Settings for the HTML check
 lychee.toml                      Settings for the link check
@@ -177,20 +177,31 @@ node .github/scripts/check-site.js
 
 ### CI tools and updates
 
-The website has no dependencies, but the checks do. html-validate and Lighthouse CI are listed at exact versions in `.github/tools/package.json`, and `.github/tools/package-lock.json` pins every package they depend on, each with a checksum. The workflows install them with `npm ci --ignore-scripts --prefix .github/tools` and run that installed copy (never `npx`), so every run uses exactly the locked versions. The packages underneath html-validate and Lighthouse CI stay at their locked versions until an update to one of those two, or a security fix, changes them. Package install scripts are blocked three ways: the `--ignore-scripts` flag, `ignore-scripts=true` in `.github/tools/.npmrc`, and `npm_config_ignore_scripts` in each job. So installing the tools never runs code from a package. It also means Lighthouse CI doesn't download its own browser; it uses the Chrome already installed on GitHub's machines (or on your computer, locally). `.github/tools/package.json` has no `scripts` section, and GitHub Pages doesn't publish the `.github` folder.
+The website has no dependencies, but the checks do. html-validate and Lighthouse CI are listed at exact versions in `.github/tools/package.json`, and `.github/tools/package-lock.json` pins every package they depend on, each with a checksum. The workflows install them with `npm ci --ignore-scripts --prefix .github/tools` and run that installed copy (never `npx`), so every run uses exactly the locked versions. The packages underneath html-validate and Lighthouse CI stay at their locked versions until one of those two is updated. Package install scripts are blocked three ways: the `--ignore-scripts` flag, `ignore-scripts=true` in `.github/tools/.npmrc`, and `npm_config_ignore_scripts` in each job. So installing the tools never runs code from a package. It also means Lighthouse CI doesn't download its own browser; it uses the Chrome already installed on GitHub's machines (or on your computer, locally). `.github/tools/package.json` has no `scripts` section, and GitHub Pages doesn't publish the `.github` folder.
 
-The actions used by the workflows (Site checks and Lighthouse) are pinned to full commit SHAs, with the version in a comment. Each week, **Dependabot** (`.github/dependabot.yml`) checks for updates and opens:
+The actions used by the workflows (Site checks and Lighthouse) are pinned to full commit SHAs, with the version in a comment. Each week, **Dependabot** (`.github/dependabot.yml`) opens a pull request when a pinned action has a newer release that has been out for at least 7 days. To review one, check that it changes only the pinned SHA and version comment, read the release notes it links to, and merge it if the Site checks and Lighthouse runs pass.
 
-- a pull request when a pinned action has a newer release that has been out for at least 7 days
-- one grouped pull request for all CI tool updates (`.github/tools/package.json` and `package-lock.json`). It only proposes versions that have been out for at least 14 days, so a bad release is usually caught and withdrawn before it reaches the checks. Security fixes for the tools skip that waiting period: Dependabot opens them as soon as an alert appears, together in one separate grouped pull request.
+**Updating the CI tools by hand.** Dependabot can't open pull requests for the tools right now: GitHub rejects the pull requests it tries to open for `.github/tools/`. So its version updates for the tools are turned off (`open-pull-requests-limit: 0`). Dependabot alerts still cover the lockfile, so known security problems in the tools show up under the repo's **Security** tab. Dependabot still tries to open a security fix for a new alert, and that attempt shows up as a failed Dependabot run in the Actions tab. That failure is expected; make the update by hand instead. When there's a newer release, or an alert that a newer release fixes:
 
-To review a Dependabot pull request:
+1. With the tools installed (see above), check what's newer and when each release came out:
 
-1. Check that it changes only the files above.
-2. Read the release notes it links to, especially for a new major or minor version.
-3. Wait for the Site checks and Lighthouse runs, which use the updated tools.
+   ```bash
+   npm outdated --prefix .github/tools
+   npm view @lhci/cli time --json
+   npm view html-validate time --json
+   ```
 
-Merge it if they pass. If a Lighthouse CI update changes the scores, open the run's reports before merging. Don't change the tools' versions by hand: let Dependabot propose them. If you must change one, edit `package.json` and run `npm install --ignore-scripts --prefix .github/tools`, so the lockfile updates with it.
+   Wait until a release has been out for at least 14 days, since a bad release is usually caught and withdrawn by then. The one exception is a release that fixes a serious security alert; that can go ahead sooner, after reading its release notes.
+
+2. On a new branch, set the new exact version (no `^`) in `.github/tools/package.json`, then update the lockfile with Node.js 22, the version CI uses. This doesn't run any package scripts:
+
+   ```bash
+   npm install --ignore-scripts --prefix .github/tools
+   ```
+
+3. Read the release notes, check that only `.github/tools/package.json` and `package-lock.json` changed, run the checks locally (above and under [Lighthouse](#lighthouse)), and open a pull request. If a Lighthouse CI update changes the scores, compare its reports with `main` before merging.
+
+Never change versions in `package-lock.json` by editing it directly, and don't add `overrides` to force a dependency outside the range its parent package asks for.
 
 GitHub pauses scheduled workflows after 60 days without commits. If that happens, re-enable it from the Actions tab.
 
@@ -212,7 +223,7 @@ To run it locally (requires Node.js and Chrome), first install the CI tools from
 .github/tools/node_modules/.bin/lhci assert --config=.github/lighthouse/lighthouserc.json
 ```
 
-Add `--collect.settings.preset=desktop` to both `collect` commands for desktop settings. To save the HTML and JSON reports to `.lighthouseci/reports/`, also run `.github/tools/node_modules/.bin/lhci upload --config=.github/lighthouse/lighthouserc.json`. Everything goes in `.lighthouseci/`, which git ignores and the site-file check skips. The Lighthouse CI version is set by `.github/tools/package-lock.json`, which Dependabot keeps current (see [CI tools and updates](#ci-tools-and-updates)).
+Add `--collect.settings.preset=desktop` to both `collect` commands for desktop settings. To save the HTML and JSON reports to `.lighthouseci/reports/`, also run `.github/tools/node_modules/.bin/lhci upload --config=.github/lighthouse/lighthouserc.json`. Everything goes in `.lighthouseci/`, which git ignores and the site-file check skips. The Lighthouse CI version is set by `.github/tools/package-lock.json` (see [CI tools and updates](#ci-tools-and-updates)).
 
 ## License
 
