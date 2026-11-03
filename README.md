@@ -31,7 +31,7 @@
 - Plain-language privacy page at `/privacy/`, linked from every page's footer: no cookies, analytics, ads, or trackers, plus what Google Maps and GitHub (the host) do.
 - Installable on phones: add it to the home screen and it opens full-screen like an app, with its own Marvin's icon
 - Works offline once visited: the menu, prices, and hours load with no signal (the map needs a connection)
-- Install tip that shows each phone the right steps: Safari and Chrome on iPhone get Share-menu instructions, and Android gets an Install button
+- Install tip that shows each phone the right steps: on iPhone and iPad, Safari, Chrome, and other browsers each get their own Share-menu instructions (in-app browsers such as Facebook's can't install, so they get no tip), and Android gets an Install button
 - In app mode, the print button is hidden since printing from a phone app is awkward
 
 **Behind the scenes**
@@ -150,7 +150,7 @@ Offline support and the install tip also need the local web server, since browse
 
 ## Automated checks
 
-The **Site checks** workflow runs on every pull request into `main` (including Dependabot's), every push to `main`, every Monday at 9 AM Eastern, and on demand (**Actions → Site checks → Run workflow**). A newer commit on a pull request cancels that PR's older run. It has three jobs:
+The **Site checks** workflow runs on every pull request into `main` (including Dependabot's), every push to `main`, every Monday at 13:00 UTC (9 AM Eastern during daylight saving time, 8 AM otherwise), and on demand (**Actions → Site checks → Run workflow**). A newer commit on a pull request cancels that PR's older run. It has three jobs:
 
 - **HTML validation** checks `index.html`, `404.html`, and `privacy/index.html` with [html-validate](https://html-validate.org/). Rules are set in `.htmlvalidate.json`.
 - **Link check** checks every link with [lychee](https://lychee.cli.rs/), including in-page jump links like `#menu`. Settings are in `lychee.toml`. Facebook, Yelp, and TripAdvisor often block automated checkers even when their pages are fine, so those "blocked" responses are treated as OK.

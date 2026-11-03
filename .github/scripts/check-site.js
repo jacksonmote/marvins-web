@@ -7,7 +7,8 @@
 // It also guards what the privacy page (privacy/index.html) promises: every
 // page's footer links to it, its contact email appears nowhere else, and no
 // page loads anything from another origin except the Google Maps embed.
-// And it keeps every page's Content-Security-Policy strict (see h below).
+// And it keeps every page's Content-Security-Policy strict (see h below) and
+// makes sure app.js and sw.js name no outside address (see i).
 
 const fs = require('fs');
 const path = require('path');
@@ -296,4 +297,4 @@ if (problems.length > 0) {
   for (const p of problems) console.error(`  - ${p}`);
   process.exit(1);
 }
-console.log('Site file check passed: PRECACHE files, manifest, JSON-LD, local references, privacy links, and outside requests are all fine.');
+console.log('Site file check passed: PRECACHE files, manifest, JSON-LD, local references, privacy links, outside requests, Content-Security-Policy, and outside addresses in app.js and sw.js are all fine.');
