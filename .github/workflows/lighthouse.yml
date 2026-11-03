@@ -1,0 +1,87 @@
+# Runs Lighthouse on the homepage, the privacy page, and the 404 page, on mobile
+# and desktop, so a change that lowers a score is caught before it reaches main.
+# Runs on every pull request into main, every push to main, and on demand
+# (Actions tab > Lighthouse > Run workflow).
+#
+# Settings and score thresholds are in .github/lighthouse/lighthouserc.json (not
+# the repo root, which GitHub Pages publishes). Reports are saved as a workflow
+# artifact for 14 days; nothing is uploaded to a public report server.
+name: Lighthouse
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A new commit on a PR cancels that PR's older run
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    name: Lighthouse (${{ matrix.form-factor }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - form-factor: mobile
+            preset: "" # Lighthouse's default is mobile
+          - form-factor: desktop
+            preset: --collect.settings.preset=desktop
+    env:
+      # The version is pinned exactly; raise it by hand when you want a newer
+      # Lighthouse CI (and the Lighthouse version it bundles).
+      LHCI: npx --yes @lhci/cli@0.15.1
+      CONFIG: .github/lighthouse/lighthouserc.json
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      # Lighthouse CI serves the repo root as a static site (no build step), so
+      # /privacy/ loads privacy/index.html the way GitHub Pages does. 3 runs per page.
+      - name: Run Lighthouse on / and /privacy/
+        run: $LHCI collect --config=$CONFIG ${{ matrix.preset }} --url=http://localhost/ --url=http://localhost/privacy/
+
+      # The 404 page is collected separately so two SEO audits can be turned off
+      # for it alone (they stay on for the other pages):
+      # - is-crawlable: the page has <meta name="robots" content="noindex"> on
+      #   purpose, so search engines don't index "Page not found".
+      # - meta-description: search engines never show a description for a
+      #   noindex page, so the page has none.
+      - name: Run Lighthouse on /404.html
+        run: >-
+          $LHCI collect --config=$CONFIG ${{ matrix.preset }} --additive
+          --url=http://localhost/404.html
+          --collect.settings.skipAudits=is-crawlable
+          --collect.settings.skipAudits=meta-description
+
+      # Save the HTML and JSON reports before checking scores, so they are
+      # available even when the check fails
+      - name: Save reports
+        if: ${{ !cancelled() }}
+        run: $LHCI upload --config=$CONFIG
+
+      - name: Check scores
+        run: $LHCI assert --config=$CONFIG
+
+      - name: Upload reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lighthouse-${{ matrix.form-factor }}
+          path: .lighthouseci/reports/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14

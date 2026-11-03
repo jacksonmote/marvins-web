@@ -1,0 +1,2 @@
+# Lighthouse CI results and reports (made by .github/workflows/lighthouse.yml or a local run)
+.lighthouseci/

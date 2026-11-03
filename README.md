@@ -40,6 +40,7 @@
 - Structured data so search engines can show hours, address, and phone
 - Canonical URL, `robots.txt`, and `sitemap.xml` for search engines
 - Accessibility checked with axe and Lighthouse (no issues found)
+- Lighthouse run automatically on every pull request, on phone and desktop settings, so a change that lowers a score is caught before it goes live
 - Web app manifest and home-screen icons made from the banner
 - Offline support through a service worker that always loads the live site when online, so menu and price changes show up right away
 - Content Security Policy and referrer policy on every page, so only the site's own files and the Google Maps embed can load
@@ -61,7 +62,7 @@ The site is plain HTML and CSS with no framework, no build step, and no dependen
 - **Content Security Policy and referrer policy** (meta tags on every page) so the pages can only load their own files plus the Google Maps embed, with no inline scripts or styles
 - **GitHub Actions** to run the automated checks, with each action pinned to a full commit SHA and kept current by Dependabot
 - **html-validate** and **lychee** for HTML validation and link checking
-- **axe** and **Lighthouse** for accessibility and performance auditing
+- **axe** and **Lighthouse** for accessibility and performance auditing, with **Lighthouse CI** running Lighthouse automatically in GitHub Actions
 
 ## File structure
 
@@ -83,11 +84,14 @@ favicon.ico                      Browser-tab and Google search icon (16, 32, and
 assets/                          Banner (JPEG plus 480, 800, and 1200 px WebP versions), install-tip icon (install-tip-icon.webp), large favicon, and home-screen icons
 assets/fonts/                    Self-hosted WOFF2 fonts (Bowlby One, Libre Franklin) and their OFL license
 .github/workflows/site-checks.yml  Automated HTML, link, and site-file checks
+.github/workflows/lighthouse.yml   Automated Lighthouse scores for the homepage, privacy page, and 404 page
+.github/lighthouse/lighthouserc.json  Lighthouse CI settings and minimum scores (kept out of the repo root so the site doesn't publish it)
 .github/scripts/check-site.js    Checks offline files, manifest, structured data, local file references, privacy links, and outside requests
 .github/dependabot.yml           Weekly pull requests when a pinned GitHub Action has an update
 .github/SECURITY.md              How to report a security problem privately
 .htmlvalidate.json               Settings for the HTML check
 lychee.toml                      Settings for the link check
+.gitignore                       Keeps local Lighthouse CI reports (.lighthouseci/) out of the repo
 ```
 
 ## Updating the site
@@ -164,6 +168,25 @@ node .github/scripts/check-site.js
 The actions used by the workflow are pinned to full commit SHAs (with the version in a comment), html-validate is pinned to an exact version in the workflow (raise it by hand), and **Dependabot** (`.github/dependabot.yml`) opens a pull request each week when one has a newer release. Review and merge those like any other change; the Site checks run on them automatically.
 
 GitHub pauses scheduled workflows after 60 days without commits. If that happens, re-enable it from the Actions tab.
+
+### Lighthouse
+
+The **Lighthouse** workflow runs [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) on every pull request into `main`, every push to `main`, and on demand (**Actions → Lighthouse → Run workflow**). It serves the repo as a static site and tests `/`, `/privacy/`, and `/404.html` three times each, once with phone settings and once with desktop settings. A run fails if, for any page:
+
+- Accessibility, Best Practices, or SEO is below 100
+- Performance is below 90 (below 100 only shows a warning, since GitHub's machines vary from run to run)
+- Cumulative Layout Shift is above 0.1
+
+Settings and minimum scores are in `.github/lighthouse/lighthouserc.json`. On the 404 page only, two SEO audits are turned off: "is crawlable", since that page is `noindex` on purpose, and "meta description", since search engines never show one for a `noindex` page. Lighthouse's full-page screenshot is turned off because taking it scrolls the whole page into view, which would load the Google map. The reports (HTML and JSON) are attached to each run as artifacts for 14 days (open the run and look under **Artifacts**). They are never uploaded to a public report server.
+
+To run it locally (requires Node.js and Chrome), from the project folder:
+
+```bash
+npx @lhci/cli@0.15.1 collect --config=.github/lighthouse/lighthouserc.json --url=http://localhost/ --url=http://localhost/privacy/
+npx @lhci/cli@0.15.1 assert --config=.github/lighthouse/lighthouserc.json
+```
+
+Add `--collect.settings.preset=desktop` to the first command for desktop settings. Results go in `.lighthouseci/`, which git ignores. Lighthouse CI is pinned to an exact version in `.github/workflows/lighthouse.yml`; raise it there by hand.
 
 ## License
 
