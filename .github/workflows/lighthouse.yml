@@ -44,7 +44,7 @@ jobs:
       # Never run package install scripts (also set in .github/tools/.npmrc)
       npm_config_ignore_scripts: "true"
       # The installed copy from .github/tools/ (the version is set by its
-      # package-lock.json, which Dependabot keeps current)
+      # package-lock.json)
       LHCI: .github/tools/node_modules/.bin/lhci
       CONFIG: .github/lighthouse/lighthouserc.json
     steps:

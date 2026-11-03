@@ -42,7 +42,7 @@ jobs:
           cache: npm
           cache-dependency-path: .github/tools/package-lock.json
       # Installs the exact versions in .github/tools/package-lock.json, with
-      # package scripts blocked. Dependabot proposes updates to that lockfile.
+      # package scripts blocked.
       - run: npm ci --ignore-scripts --prefix .github/tools
       # Rules are configured in .htmlvalidate.json
       - run: .github/tools/node_modules/.bin/html-validate index.html 404.html privacy/index.html

@@ -1,5 +1,6 @@
-# Opens pull requests when a pinned GitHub Action, or one of the CI-only tools
-# in .github/tools/ (html-validate and Lighthouse CI), has a newer release.
+# Opens pull requests when a pinned GitHub Action has a newer release.
+# The CI-only tools in .github/tools/ (html-validate and Lighthouse CI) are
+# updated by hand for now; see the npm entry below.
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -11,7 +12,14 @@ updates:
     cooldown:
       default-days: 7
 
-  # CI-only tools; the website itself has no dependencies
+  # CI-only tools; the website itself has no dependencies.
+  # Version update pull requests are turned off (open-pull-requests-limit: 0):
+  # GitHub currently rejects the pull requests Dependabot tries to open for
+  # these files (HTTP 400 "invalid or unauthorized changes"; see
+  # github.com/dependabot/dependabot-core/issues/15721). Update the tools by
+  # hand instead (README, "CI tools and updates"). Dependabot alerts still
+  # cover the lockfile. Set the limit back to 5 once Dependabot can open
+  # these pull requests again; the settings below are kept ready for that.
   - package-ecosystem: npm
     directory: "/.github/tools"
     schedule:
@@ -29,4 +37,4 @@ updates:
       ci-tools-security:
         applies-to: security-updates
         patterns: ["*"]
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 0
