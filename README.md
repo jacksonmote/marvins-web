@@ -48,7 +48,7 @@
 
 ## Technologies used
 
-The site is plain HTML and CSS with no framework, no build step, and no dependencies to install. The only packages in the repo are the CI-only checking tools in `.github/tools/` (html-validate and Lighthouse CI, pinned by a lockfile), which the automated checks install; the live site never loads them, and GitHub Pages doesn't publish them.
+The site is plain HTML and CSS with no framework, no build step, and no dependencies to install. The only packages the repo uses are the CI-only checking tools in `.github/tools/` (html-validate and Lighthouse CI, pinned by a lockfile), which the automated checks install; the live site never loads them, and GitHub Pages doesn't publish them.
 
 - **HTML5** for the page structure, with semantic landmarks for accessibility
 - **CSS3** for all styling: custom properties for the color palette (with an automatic dark mode through `prefers-color-scheme`), CSS Grid and Flexbox for layout, a sticky menu bar, and a print stylesheet for the printable menu
@@ -62,7 +62,7 @@ The site is plain HTML and CSS with no framework, no build step, and no dependen
 - **Content Security Policy and referrer policy** (meta tags on every page) so the pages can only load their own files plus the Google Maps embed, with no inline scripts or styles
 - **GitHub Actions** to run the automated checks, with each action pinned to a full commit SHA and kept current by Dependabot
 - **html-validate** and **lychee** for HTML validation and link checking
-- **npm** (CI only) to install html-validate and Lighthouse CI from a lockfile in `.github/tools/`, with package install scripts blocked; Dependabot keeps the lockfile current
+- **npm** (CI only) to install html-validate and Lighthouse CI from a lockfile in `.github/tools/`, with package install scripts blocked; Dependabot proposes updates to them
 - **axe** and **Lighthouse** for accessibility and performance auditing, with **Lighthouse CI** running Lighthouse automatically in GitHub Actions
 
 ## File structure
@@ -177,7 +177,7 @@ node .github/scripts/check-site.js
 
 ### CI tools and updates
 
-The website has no dependencies, but the checks do. html-validate and Lighthouse CI are listed at exact versions in `.github/tools/package.json`, and `.github/tools/package-lock.json` pins every package they depend on, each with a checksum. The workflows install them with `npm ci --ignore-scripts --prefix .github/tools` and run that installed copy (never `npx`), so every run uses exactly the locked versions. Package install scripts are blocked three ways: the `--ignore-scripts` flag, `ignore-scripts=true` in `.github/tools/.npmrc`, and `npm_config_ignore_scripts` in each job. So installing the tools never runs code from a package. It also means Lighthouse CI doesn't download its own browser; it uses the Chrome already installed on GitHub's machines (or on your computer, locally). `.github/tools/package.json` has no `scripts` section, and GitHub Pages doesn't publish the `.github` folder.
+The website has no dependencies, but the checks do. html-validate and Lighthouse CI are listed at exact versions in `.github/tools/package.json`, and `.github/tools/package-lock.json` pins every package they depend on, each with a checksum. The workflows install them with `npm ci --ignore-scripts --prefix .github/tools` and run that installed copy (never `npx`), so every run uses exactly the locked versions. The packages underneath html-validate and Lighthouse CI stay at their locked versions until an update to one of those two, or a security fix, changes them. Package install scripts are blocked three ways: the `--ignore-scripts` flag, `ignore-scripts=true` in `.github/tools/.npmrc`, and `npm_config_ignore_scripts` in each job. So installing the tools never runs code from a package. It also means Lighthouse CI doesn't download its own browser; it uses the Chrome already installed on GitHub's machines (or on your computer, locally). `.github/tools/package.json` has no `scripts` section, and GitHub Pages doesn't publish the `.github` folder.
 
 The actions used by the workflows (Site checks and Lighthouse) are pinned to full commit SHAs, with the version in a comment. Each week, **Dependabot** (`.github/dependabot.yml`) checks for updates and opens:
 
