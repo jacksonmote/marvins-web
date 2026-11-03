@@ -3,12 +3,13 @@
 How to work on this repo, for any person or coding agent.
 
 ## What this is
-Unofficial fan website for Marvin's restaurant in Greencastle, Indiana: plain HTML, CSS, and JavaScript with no build step and no dependencies, served by GitHub Pages. It is not affiliated with the restaurant. See README.md for features ("Features"), file layout ("File structure"), how to change content ("Updating the site"), and local preview ("Previewing locally").
+Unofficial fan website for Marvin's restaurant in Greencastle, Indiana: plain HTML, CSS, and JavaScript with no build step and no dependencies, served by GitHub Pages. (The CI checks install their own pinned tools from `.github/tools/`; see Repo hygiene.) It is not affiliated with the restaurant. See README.md for features ("Features"), file layout ("File structure"), how to change content ("Updating the site"), and local preview ("Previewing locally").
 
 ## Checklist for every change
 1. Branch from the latest `main`. One PR per change.
 2. Run the same checks CI runs:
-   - `npx html-validate index.html 404.html privacy/index.html`
+   - Once (and after the lockfile changes): `npm ci --ignore-scripts --prefix .github/tools`
+   - `.github/tools/node_modules/.bin/html-validate index.html 404.html privacy/index.html`
    - `node .github/scripts/check-site.js`
    - The link check (lychee, config in `lychee.toml`) runs in CI only.
    - The **Lighthouse** workflow (Lighthouse CI, config in `.github/lighthouse/lighthouserc.json`) runs on every PR; README "Automated checks" shows how to run it locally. Keep the config out of the repo root (Pages publishes it), and never upload reports to temporary-public-storage.
@@ -39,11 +40,11 @@ Unofficial fan website for Marvin's restaurant in Greencastle, Indiana: plain HT
 - Commit only project files.
 - GitHub Actions are pinned to full commit SHAs with a version comment (`# v1.2.3`). Dependabot keeps them current.
 - Workflows use `pull_request`, never `pull_request_target`, with minimal `permissions`.
-- Do not add dependencies or a build step.
+- No dependencies and no build step for the site. The one exception is `.github/tools/` (`package.json`, `package-lock.json`, `.npmrc`): CI-only tools (html-validate, Lighthouse CI), never loaded by any page, installed with `npm ci --ignore-scripts` and run from `.github/tools/node_modules/.bin/`, never with `npx`. Never add dependencies outside it, never add a `scripts` section to its `package.json`, and never let npm run package scripts. Change tool versions only through the lockfile: merge Dependabot's grouped PR, or edit `package.json` and run `npm install --ignore-scripts --prefix .github/tools`.
 
 ## Collaboration
 - Fetch `origin` and bring your branch up to date with `main` before pushing.
-- `main` takes changes only through pull requests. Required checks, by exact job name: **HTML validation**, **Link check**, **Site files**.
+- `main` takes changes only through pull requests. Required checks, by exact job name: **HTML validation**, **Link check**, **Site files**. Never rename these jobs (or the Lighthouse jobs, **Lighthouse (mobile)** and **Lighthouse (desktop)**): branch protection matches the names exactly, so a renamed job would leave a required check waiting forever.
 - A new commit on a PR cancels its older check run.
 - The Lighthouse workflow is not a required check yet. If it fails, open the run's `lighthouse-mobile` / `lighthouse-desktop` artifact for the reports. Turn off a single audit (with a comment saying why) rather than lowering a whole category.
 - After a merge, confirm the "pages build and deployment", "Site checks", and "Lighthouse" runs pass.
