@@ -46,4 +46,4 @@ Unofficial fan website for Marvin's restaurant in Greencastle, Indiana: plain HT
 - `main` takes changes only through pull requests. Required checks, by exact job name: **HTML validation**, **Link check**, **Site files**.
 - A new commit on a PR cancels its older check run.
 - The Lighthouse workflow is not a required check yet. If it fails, open the run's `lighthouse-mobile` / `lighthouse-desktop` artifact for the reports. Turn off a single audit (with a comment saying why) rather than lowering a whole category.
-- After a merge, confirm the "pages build and deployment" and "Site checks" runs pass.
+- After a merge, confirm the "pages build and deployment", "Site checks", and "Lighthouse" runs pass.

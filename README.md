@@ -183,10 +183,11 @@ To run it locally (requires Node.js and Chrome), from the project folder:
 
 ```bash
 npx @lhci/cli@0.15.1 collect --config=.github/lighthouse/lighthouserc.json --url=http://localhost/ --url=http://localhost/privacy/
+npx @lhci/cli@0.15.1 collect --config=.github/lighthouse/lighthouserc.json --additive --url=http://localhost/404.html --collect.settings.skipAudits=is-crawlable --collect.settings.skipAudits=meta-description
 npx @lhci/cli@0.15.1 assert --config=.github/lighthouse/lighthouserc.json
 ```
 
-Add `--collect.settings.preset=desktop` to the first command for desktop settings. Results go in `.lighthouseci/`, which git ignores. Lighthouse CI is pinned to an exact version in `.github/workflows/lighthouse.yml`; raise it there by hand.
+Add `--collect.settings.preset=desktop` to both `collect` commands for desktop settings. `npx @lhci/cli@0.15.1 upload --config=.github/lighthouse/lighthouserc.json` saves the HTML reports to `.lighthouseci/reports/`. Results go in `.lighthouseci/`, which git ignores. Lighthouse CI is pinned to an exact version in `.github/workflows/lighthouse.yml`; raise it there by hand.
 
 ## License
 
