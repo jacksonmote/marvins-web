@@ -6,6 +6,10 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    # Only propose releases that have been out for at least 7 days.
+    # Security updates are not delayed.
+    cooldown:
+      default-days: 7
 
   # CI-only tools; the website itself has no dependencies
   - package-ecosystem: npm
@@ -16,8 +20,13 @@ updates:
     # Security updates are not delayed.
     cooldown:
       default-days: 14
-    # One pull request for all of the tools' updates
+    # One pull request for all of the tools' version updates, and one for all
+    # of their security updates
     groups:
       ci-tools:
+        applies-to: version-updates
+        patterns: ["*"]
+      ci-tools-security:
+        applies-to: security-updates
         patterns: ["*"]
     open-pull-requests-limit: 5

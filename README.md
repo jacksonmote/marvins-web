@@ -181,8 +181,8 @@ The website has no dependencies, but the checks do. html-validate and Lighthouse
 
 The actions used by the workflows (Site checks and Lighthouse) are pinned to full commit SHAs, with the version in a comment. Each week, **Dependabot** (`.github/dependabot.yml`) checks for updates and opens:
 
-- a pull request when a pinned action has a newer release
-- one grouped pull request for all CI tool updates (`.github/tools/package.json` and `package-lock.json`). It only proposes versions that have been out for at least 14 days, so a bad release is usually caught and withdrawn before it reaches the checks. Security fixes for the tools skip that waiting period.
+- a pull request when a pinned action has a newer release that has been out for at least 7 days
+- one grouped pull request for all CI tool updates (`.github/tools/package.json` and `package-lock.json`). It only proposes versions that have been out for at least 14 days, so a bad release is usually caught and withdrawn before it reaches the checks. Security fixes for the tools skip that waiting period: Dependabot opens them as soon as an alert appears, together in one separate grouped pull request.
 
 To review a Dependabot pull request:
 
