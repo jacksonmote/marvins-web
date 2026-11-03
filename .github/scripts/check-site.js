@@ -173,8 +173,9 @@ function checkNotExternal(url, file, what) {
 }
 // h. Every page's Content-Security-Policy stays strict. Sources may only be
 // 'self', 'none', or the Google Maps embed (in frame-src): no wildcards, no
-// whole schemes (https:, data:, blob:), no 'unsafe-...' keywords, no other
-// hosts. A few directives must be present with exactly these values.
+// whole schemes (https:, data:, blob:), no keywords containing "unsafe"
+// ('unsafe-inline', 'wasm-unsafe-eval', ...), no other hosts, and no directive
+// set twice. A few directives must be present with exactly these values.
 const CSP_REQUIRED = { 'object-src': "'none'", 'base-uri': "'self'", 'form-action': "'none'" };
 const CSP_NOT_SOURCES = new Set(['sandbox', 'require-trusted-types-for', 'trusted-types', 'webrtc']);
 function parseAttributes(tagBody) {
