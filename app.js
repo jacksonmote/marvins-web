@@ -1,4 +1,4 @@
-/* Site behavior: print button, offline support, home-screen app mode, and the install tip */
+/* Site behavior: offline support, home-screen app mode, print button, the scroll-loaded map, and the install tip */
 (function () {
   'use strict';
 
