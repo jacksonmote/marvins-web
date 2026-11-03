@@ -81,11 +81,13 @@ if (indexHtml !== null) {
   });
 }
 
-// All pages: every .html file in the repo (skipping .git and node_modules)
+// All pages: every .html file in the repo (skipping .git, node_modules, and
+// .lighthouseci, where a local Lighthouse CI run saves its reports)
+const SKIP_DIRS = new Set(['.git', 'node_modules', '.lighthouseci']);
 function walk(dir) {
   const out = [];
   for (const entry of fs.readdirSync(path.join(root, dir), { withFileTypes: true })) {
-    if (entry.name === '.git' || entry.name === 'node_modules') continue;
+    if (SKIP_DIRS.has(entry.name)) continue;
     const rel = dir === '.' ? entry.name : `${dir}/${entry.name}`;
     if (entry.isDirectory()) out.push(...walk(rel));
     else out.push(rel);

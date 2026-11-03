@@ -11,6 +11,7 @@ Unofficial fan website for Marvin's restaurant in Greencastle, Indiana: plain HT
    - `npx html-validate index.html 404.html privacy/index.html`
    - `node .github/scripts/check-site.js`
    - The link check (lychee, config in `lychee.toml`) runs in CI only.
+   - The **Lighthouse** workflow (Lighthouse CI, config in `.github/lighthouse/lighthouserc.json`) runs on every PR; README "Automated checks" shows how to run it locally. Keep the config out of the repo root (Pages publishes it), and never upload reports to temporary-public-storage.
 3. For visible changes, preview over `python -m http.server` (opening files from disk won't load `app.js`) at phone and desktop widths, in light and dark mode, and in Print Preview. Stop the server afterward.
 4. Light mode must stay pixel-identical unless the change is meant to alter it.
 5. Keep Lighthouse at 100 (desktop and mobile) with CLS about 0. Compare against `main` on the same server; a local Python server reads about 2 points low on mobile.
@@ -44,4 +45,5 @@ Unofficial fan website for Marvin's restaurant in Greencastle, Indiana: plain HT
 - Fetch `origin` and bring your branch up to date with `main` before pushing.
 - `main` takes changes only through pull requests. Required checks, by exact job name: **HTML validation**, **Link check**, **Site files**.
 - A new commit on a PR cancels its older check run.
-- After a merge, confirm the "pages build and deployment" and "Site checks" runs pass.
+- The Lighthouse workflow is not a required check yet. If it fails, open the run's `lighthouse-mobile` / `lighthouse-desktop` artifact for the reports. Turn off a single audit (with a comment saying why) rather than lowering a whole category.
+- After a merge, confirm the "pages build and deployment", "Site checks", and "Lighthouse" runs pass.
