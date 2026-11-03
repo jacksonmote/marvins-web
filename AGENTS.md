@@ -31,7 +31,7 @@ Unofficial fan website for Marvin's restaurant in Greencastle, Indiana: plain HT
   - Address and phone: hero, contact, call bar (both pages), print header, directions links, map, structured data. Search for every instance.
 - **Colors** are custom properties named by job (`--accent-text`, `--accent-fill`, `--heading-alt`, ...). Light values live in `:root`, dark values in the `prefers-color-scheme` block right below it. A new color needs both, plus a reset in `@media print` (the printed menu stays black on white). Dark mode is automatic: no toggle, no JS. Known limits: the Google map stays light, and manifest colors are light-only.
 - **Print layout:** the printed menu stays at two pages, black on white.
-- **Offline:** `sw.js` is network-first, and its `PRECACHE` list must match the real files (CI checks this).
+- **Offline:** `sw.js` is network-first, and its `PRECACHE` list must match the real files (CI checks this). It keeps one cache entry per listed path, saved under the path without any query string.
 - **Non-commercial:** no ads, affiliate links, donations, or sales. Do not copy reviews from other sites; summarize in your own words or use testimonials with permission.
 - **Nothing private** in the repo: no credentials, personal details, local paths, plans, or notes, and no operational details about accounts or monitoring.
 

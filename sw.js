@@ -7,7 +7,7 @@
  * Bump CACHE_VERSION when the PRECACHE list below changes. Bump it also to
  * clear every visitor's saved copies if a bad version was ever cached.
  */
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const CACHE = `marvins-${CACHE_VERSION}`;
 const NETWORK_TIMEOUT_MS = 4000;
 
@@ -70,9 +70,12 @@ async function networkFirst(request) {
   const cache = await caches.open(CACHE);
   try {
     const response = await fetchWithTimeout(request);
-    // Only save the site's own listed files, and only complete responses
-    if (response && response.status === 200 && PRECACHED.has(new URL(request.url).pathname)) {
-      cache.put(request, response.clone()).catch(() => {});
+    // Only save the site's own listed files, and only complete responses.
+    // Save under the path alone, so links with ?fbclid= or ?utm_ tags
+    // replace the one saved copy instead of adding another.
+    const url = new URL(request.url);
+    if (response && response.status === 200 && PRECACHED.has(url.pathname)) {
+      cache.put(url.pathname, response.clone()).catch(() => {});
     }
     return response;
   } catch (err) {
