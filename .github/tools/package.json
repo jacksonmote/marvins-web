@@ -1,0 +1,9 @@
+{
+  "name": "marvins-web-ci-tools",
+  "private": true,
+  "description": "CI-only tools (HTML validation and Lighthouse CI) used by the GitHub Actions workflows. Not part of the website: no page loads anything from here.",
+  "devDependencies": {
+    "@lhci/cli": "0.15.1",
+    "html-validate": "11.17.0"
+  }
+}

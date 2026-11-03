@@ -6,6 +6,10 @@
 # Settings and score thresholds are in .github/lighthouse/lighthouserc.json (not
 # the repo root, which GitHub Pages publishes). Reports are saved as a workflow
 # artifact for 14 days; nothing is uploaded to a public report server.
+#
+# Lighthouse CI is installed from the CI-only lockfile in .github/tools/ with
+# package scripts blocked, so nothing is downloaded with npx and no browser is
+# downloaded either: Lighthouse uses the Chrome already on the runner.
 name: Lighthouse
 
 on:
@@ -37,9 +41,11 @@ jobs:
           - form-factor: desktop
             preset: --collect.settings.preset=desktop
     env:
-      # The version is pinned exactly; raise it by hand when you want a newer
-      # Lighthouse CI (and the Lighthouse version it bundles).
-      LHCI: npx --yes @lhci/cli@0.15.1
+      # Never run package install scripts (also set in .github/tools/.npmrc)
+      npm_config_ignore_scripts: "true"
+      # The installed copy from .github/tools/ (the version is set by its
+      # package-lock.json, which Dependabot keeps current)
+      LHCI: .github/tools/node_modules/.bin/lhci
       CONFIG: .github/lighthouse/lighthouserc.json
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -48,6 +54,13 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: .github/tools/package-lock.json
+
+      # Installs the exact versions in .github/tools/package-lock.json, with
+      # package scripts blocked
+      - name: Install Lighthouse CI
+        run: npm ci --ignore-scripts --prefix .github/tools
 
       # Lighthouse CI serves the repo root as a static site (no build step), so
       # /privacy/ loads privacy/index.html the way GitHub Pages does. 3 runs per page.

@@ -1,7 +1,32 @@
-# Opens a pull request when a pinned GitHub Action has a newer release.
+# Opens pull requests when a pinned GitHub Action, or one of the CI-only tools
+# in .github/tools/ (html-validate and Lighthouse CI), has a newer release.
 version: 2
 updates:
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
+    # Only propose releases that have been out for at least 7 days.
+    # Security updates are not delayed.
+    cooldown:
+      default-days: 7
+
+  # CI-only tools; the website itself has no dependencies
+  - package-ecosystem: npm
+    directory: "/.github/tools"
+    schedule:
+      interval: weekly
+    # Only propose versions that have been out for at least 14 days.
+    # Security updates are not delayed.
+    cooldown:
+      default-days: 14
+    # One pull request for all of the tools' version updates, and one for all
+    # of their security updates
+    groups:
+      ci-tools:
+        applies-to: version-updates
+        patterns: ["*"]
+      ci-tools-security:
+        applies-to: security-updates
+        patterns: ["*"]
+    open-pull-requests-limit: 5

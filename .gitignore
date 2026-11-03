@@ -1,2 +1,5 @@
 # Lighthouse CI results and reports (made by .github/workflows/lighthouse.yml or a local run)
 .lighthouseci/
+
+# CI-only tools installed by npm ci --prefix .github/tools (see README "Automated checks")
+.github/tools/node_modules/
