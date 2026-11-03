@@ -296,4 +296,4 @@ if (problems.length > 0) {
   for (const p of problems) console.error(`  - ${p}`);
   process.exit(1);
 }
-console.log('Site file check passed: PRECACHE files, manifest, JSON-LD, local references, privacy links, and outside requests are all fine.');
+console.log('Site file check passed: PRECACHE files, manifest, JSON-LD, local references, privacy links, outside requests, Content-Security-Policy, and outside addresses in app.js and sw.js are all fine.');
