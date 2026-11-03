@@ -154,7 +154,7 @@ The **Site checks** workflow runs on every pull request into `main` (including D
 
 - **HTML validation** checks `index.html`, `404.html`, and `privacy/index.html` with [html-validate](https://html-validate.org/). Rules are set in `.htmlvalidate.json`.
 - **Link check** checks every link with [lychee](https://lychee.cli.rs/), including in-page jump links like `#menu`. Settings are in `lychee.toml`, Facebook, Yelp, and TripAdvisor often block automated checkers even when their pages are fine, so those "blocked" responses are treated as OK.
-- **Site files** runs `.github/scripts/check-site.js`, which fails if a file listed in `PRECACHE` (in `sw.js`) is missing, `manifest.webmanifest` or the structured data in `index.html` is not valid JSON, a manifest icon is missing, or a local file referenced by `href` or `src` in a page does not exist. It also fails if a page's footer doesn't link to `/privacy/`, the privacy contact email appears anywhere but the privacy page, or a page (or `styles.css`) loads something from another origin other than the Google Maps embed.
+- **Site files** runs `.github/scripts/check-site.js`, which fails if a file listed in `PRECACHE` (in `sw.js`) is missing, `manifest.webmanifest` or the structured data in `index.html` is not valid JSON, a manifest icon is missing, or a local file referenced by `href` or `src` in a page does not exist. It also fails if a page's footer doesn't link to `/privacy/`, the privacy contact email appears anywhere but the privacy page, or a page (or `styles.css`) loads something from another origin other than the Google Maps embed. It skips the `.git`, `node_modules`, and `.lighthouseci` folders.
 
 If a check fails, GitHub emails the repo owner. Open the failed run in the Actions tab to see which line or link caused it.
 
@@ -165,7 +165,7 @@ npx html-validate index.html 404.html privacy/index.html
 node .github/scripts/check-site.js
 ```
 
-The actions used by the workflow are pinned to full commit SHAs (with the version in a comment), html-validate is pinned to an exact version in the workflow (raise it by hand), and **Dependabot** (`.github/dependabot.yml`) opens a pull request each week when one has a newer release. Review and merge those like any other change; the Site checks run on them automatically.
+The actions used by the workflows (Site checks and Lighthouse) are pinned to full commit SHAs (with the version in a comment), html-validate and Lighthouse CI are pinned to exact versions in their workflows (raise them by hand), and **Dependabot** (`.github/dependabot.yml`) opens a pull request each week when a pinned action has a newer release. Review and merge those like any other change; the Site checks and Lighthouse run on them automatically.
 
 GitHub pauses scheduled workflows after 60 days without commits. If that happens, re-enable it from the Actions tab.
 
@@ -187,7 +187,7 @@ npx @lhci/cli@0.15.1 collect --config=.github/lighthouse/lighthouserc.json --add
 npx @lhci/cli@0.15.1 assert --config=.github/lighthouse/lighthouserc.json
 ```
 
-Add `--collect.settings.preset=desktop` to both `collect` commands for desktop settings. `npx @lhci/cli@0.15.1 upload --config=.github/lighthouse/lighthouserc.json` saves the HTML reports to `.lighthouseci/reports/`. Results go in `.lighthouseci/`, which git ignores. Lighthouse CI is pinned to an exact version in `.github/workflows/lighthouse.yml`; raise it there by hand.
+Add `--collect.settings.preset=desktop` to both `collect` commands for desktop settings. To save the HTML and JSON reports to `.lighthouseci/reports/`, also run `npx @lhci/cli@0.15.1 upload --config=.github/lighthouse/lighthouserc.json`. Everything goes in `.lighthouseci/`, which git ignores and the site-file check skips. Lighthouse CI is pinned to an exact version in `.github/workflows/lighthouse.yml`; raise it there by hand (and in the commands above).
 
 ## License
 
