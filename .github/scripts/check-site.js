@@ -7,12 +7,25 @@
 // It also guards what the privacy page (privacy/index.html) promises: every
 // page's footer links to it, its contact email appears nowhere else, and no
 // page loads anything from another origin except the Google Maps embed.
+// And it keeps every page's Content-Security-Policy strict (see h below).
 
 const fs = require('fs');
 const path = require('path');
 
 const root = process.cwd();
 const problems = [];
+
+// Attribute values can be written as name="value", name='value', or name=value.
+// attrRegex('href|src', 'g') matches any of them; attrValue(m, i) returns the
+// value from match m when the name list is capture group i (then i + 1..i + 3
+// hold the three quoting forms).
+const ATTR_VALUE = String.raw`\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>\x60]+))`;
+function attrRegex(names, flags) {
+  return new RegExp(String.raw`\s(${names})${ATTR_VALUE}`, flags);
+}
+function attrValue(m, i) {
+  return m[i + 1] ?? m[i + 2] ?? m[i + 3];
+}
 
 function read(file) {
   try {
@@ -103,8 +116,8 @@ const MAPS_EMBED = 'https://www.google.com/maps/embed';
 for (const file of pages) {
   const html = file === 'index.html' ? indexHtml : read(file);
   if (html === null) continue;
-  for (const m of html.matchAll(/\s(?:href|src)\s*=\s*"([^"]*)"/g)) {
-    const ref = m[1].trim();
+  for (const m of html.matchAll(attrRegex('href|src', 'g'))) {
+    const ref = attrValue(m, 1).trim();
     if (ref === '' || ref.startsWith('#')) continue;
     if (/^[a-z][a-z0-9+.-]*:/i.test(ref) || ref.startsWith('//')) continue; // https:, tel:, mailto:, etc.
     checkExists(ref, file, `${file} reference`);
@@ -158,34 +171,97 @@ function checkNotExternal(url, file, what) {
     problems.push(`${file}: ${what} loads from another origin (${url.trim().slice(0, 80)}); only the Google Maps embed (${MAPS_EMBED}) is allowed`);
   }
 }
+// h. Every page's Content-Security-Policy stays strict. Sources may only be
+// 'self', 'none', or the Google Maps embed (in frame-src): no wildcards, no
+// whole schemes (https:, data:, blob:), no 'unsafe-...' keywords, no other
+// hosts. A few directives must be present with exactly these values.
+const CSP_REQUIRED = { 'object-src': "'none'", 'base-uri': "'self'", 'form-action': "'none'" };
+const CSP_NOT_SOURCES = new Set(['sandbox', 'require-trusted-types-for', 'trusted-types', 'webrtc']);
+function parseAttributes(tagBody) {
+  const attrs = {};
+  for (const m of tagBody.matchAll(/\s([^\s"'=<>/\x60]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>\x60]+)))?/g)) {
+    const name = m[1].toLowerCase();
+    if (!(name in attrs)) attrs[name] = m[2] ?? m[3] ?? m[4] ?? '';
+  }
+  return attrs;
+}
+function checkCsp(html, file) {
+  const policies = [];
+  for (const m of html.matchAll(/<meta\b((?:[^>"']|"[^"]*"|'[^']*')*)>/gi)) {
+    const attrs = parseAttributes(m[1]);
+    if ((attrs['http-equiv'] || '').trim().toLowerCase() === 'content-security-policy') policies.push(attrs.content || '');
+  }
+  if (policies.length === 0) {
+    problems.push(`${file}: no Content-Security-Policy meta tag`);
+    return;
+  }
+  const satisfied = new Set();
+  const wrongValue = {};
+  for (const policy of policies) {
+    const seen = new Set();
+    for (const part of policy.split(';')) {
+      const tokens = part.trim().split(/\s+/).filter(Boolean);
+      if (tokens.length === 0) continue;
+      const name = tokens[0].toLowerCase();
+      const sources = tokens.slice(1);
+      if (seen.has(name)) {
+        problems.push(`${file}: the Content-Security-Policy sets ${name} twice; browsers ignore the second one, so remove it`);
+        continue;
+      }
+      seen.add(name);
+      if (name in CSP_REQUIRED) {
+        const value = sources.join(' ');
+        if (value.toLowerCase() === CSP_REQUIRED[name]) satisfied.add(name);
+        else wrongValue[name] = value || '(empty)';
+      }
+      if (CSP_NOT_SOURCES.has(name)) continue;
+      for (const s of sources) {
+        const where = `in ${name}`;
+        if (s.includes('*')) {
+          problems.push(`${file}: the Content-Security-Policy allows a wildcard (${s} ${where}); only 'self', 'none', and the Google Maps embed are allowed`);
+        } else if (/^[a-z][a-z0-9+.-]*:$/i.test(s)) {
+          problems.push(`${file}: the Content-Security-Policy allows a whole scheme (${s} ${where}), which lets in any address that uses it; only 'self', 'none', and the Google Maps embed are allowed`);
+        } else if (/^'.*unsafe.*'$/i.test(s)) {
+          problems.push(`${file}: the Content-Security-Policy uses ${s} (${where}), which switches off its protection against inline or injected code; put code in app.js and styling in styles.css instead`);
+        } else if (s.includes('//')) {
+          if (!s.startsWith(MAPS_EMBED)) problems.push(`${file}: the Content-Security-Policy allows another origin (${s}); only ${MAPS_EMBED} is allowed`);
+          else if (name !== 'frame-src') problems.push(`${file}: the Content-Security-Policy allows the Google Maps embed ${where}; it belongs in frame-src only`);
+        } else if (!/^'(self|none)'$/i.test(s)) {
+          problems.push(`${file}: the Content-Security-Policy allows ${s} (${where}); only 'self', 'none', and the Google Maps embed are allowed`);
+        }
+      }
+    }
+  }
+  for (const [name, value] of Object.entries(CSP_REQUIRED)) {
+    if (satisfied.has(name)) continue;
+    if (name in wrongValue) problems.push(`${file}: the Content-Security-Policy has ${name} ${wrongValue[name]}; it must be exactly ${name} ${value}`);
+    else problems.push(`${file}: the Content-Security-Policy is missing ${name} ${value}`);
+  }
+}
+
 const LOADING_REL = /(^|\s)(stylesheet|icon|apple-touch-icon|mask-icon|manifest|preload|prefetch|modulepreload|preconnect|dns-prefetch|prerender)(\s|$)/i;
 for (const file of pages) {
   const html = file === 'index.html' ? indexHtml : read(file);
   if (html === null) continue;
   // Elements that load a file: src, srcset, poster, data (<object>)
-  for (const m of html.matchAll(/\s(src|srcset|poster|data)\s*=\s*"([^"]*)"/gi)) {
-    const urls = m[1].toLowerCase() === 'srcset' ? m[2].split(',').map((c) => c.trim().split(/\s+/)[0]) : [m[2]];
+  for (const m of html.matchAll(attrRegex('src|srcset|poster|data', 'gi'))) {
+    const value = attrValue(m, 1);
+    const urls = m[1].toLowerCase() === 'srcset' ? value.split(',').map((c) => c.trim().split(/\s+/)[0]) : [value];
     for (const u of urls) checkNotExternal(u, file, `<... ${m[1]}=...>`);
   }
   // <link> tags that load something (canonical, alternate, etc. only describe the page)
-  for (const m of html.matchAll(/<link\b[^>]*>/gi)) {
-    const rel = (m[0].match(/\srel\s*=\s*"([^"]*)"/i) || [])[1] || '';
-    const href = (m[0].match(/\shref\s*=\s*"([^"]*)"/i) || [])[1];
+  for (const m of html.matchAll(/<link\b(?:[^>"']|"[^"]*"|'[^']*')*>/gi)) {
+    const relMatch = m[0].match(attrRegex('rel', 'i'));
+    const hrefMatch = m[0].match(attrRegex('href', 'i'));
+    const rel = relMatch ? attrValue(relMatch, 1) : '';
+    const href = hrefMatch ? attrValue(hrefMatch, 1) : undefined;
     if (href !== undefined && LOADING_REL.test(rel)) checkNotExternal(href, file, `<link rel="${rel}">`);
   }
   // The map's address is loaded by app.js; it must be the Google Maps embed
-  for (const m of html.matchAll(/\sdata-map-src\s*=\s*"([^"]*)"/gi)) {
-    if (!m[1].trim().startsWith(MAPS_EMBED)) problems.push(`${file}: data-map-src must start with ${MAPS_EMBED}`);
+  for (const m of html.matchAll(attrRegex('data-map-src', 'gi'))) {
+    if (!attrValue(m, 1).trim().startsWith(MAPS_EMBED)) problems.push(`${file}: data-map-src must start with ${MAPS_EMBED}`);
   }
-  // The Content-Security-Policy may name no outside address except the Maps embed
-  const csp = (html.match(/<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]*)"/i) || [])[1];
-  if (csp === undefined) {
-    problems.push(`${file}: no Content-Security-Policy meta tag`);
-  } else {
-    for (const m of csp.matchAll(/(?:https?:)?\/\/[^\s;]+/gi)) {
-      if (!m[0].startsWith(MAPS_EMBED)) problems.push(`${file}: the Content-Security-Policy allows another origin (${m[0]}); only ${MAPS_EMBED} is allowed`);
-    }
-  }
+  checkCsp(html, file);
 }
 const stylesCss = read('styles.css');
 if (stylesCss !== null) {
@@ -195,6 +271,23 @@ if (stylesCss !== null) {
   for (const m of stylesCss.matchAll(/@import\s+(?:url\()?\s*['"]?\s*((?:https?:)?\/\/[^)'"\s;]+)/gi)) {
     problems.push(`styles.css: @import loads from another origin (${m[1]})`);
   }
+}
+
+// i. app.js and sw.js name no outside address except the Google Maps embed.
+// Every line is scanned, comments included, so nothing can hide in a string
+// that looks like a comment. In a comment, write an address without https://.
+for (const file of ['app.js', 'sw.js']) {
+  const text = read(file);
+  if (text === null) continue;
+  text.split('\n').forEach((line, i) => {
+    const found = [...line.matchAll(/https?:\/\/[^\s'"\x60)]*/gi), ...line.matchAll(/['"\x60](\/\/[^\s'"\x60)]*)/g)];
+    for (const m of found) {
+      const url = m[1] ?? m[0];
+      if (!url.startsWith(MAPS_EMBED)) {
+        problems.push(`${file}: line ${i + 1} names another origin (${url.slice(0, 80)}); only the Google Maps embed (${MAPS_EMBED}) is allowed, even in comments`);
+      }
+    }
+  });
 }
 
 if (problems.length > 0) {

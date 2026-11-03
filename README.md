@@ -86,7 +86,7 @@ assets/fonts/                    Self-hosted WOFF2 fonts (Bowlby One, Libre Fran
 .github/workflows/site-checks.yml  Automated HTML, link, and site-file checks
 .github/workflows/lighthouse.yml   Automated Lighthouse scores for the homepage, privacy page, and 404 page
 .github/lighthouse/lighthouserc.json  Lighthouse CI settings and minimum scores (kept out of the repo root so the site doesn't publish it)
-.github/scripts/check-site.js    Checks offline files, manifest, structured data, local file references, privacy links, and outside requests
+.github/scripts/check-site.js    Checks offline files, manifest, structured data, local file references, privacy links, outside requests, and the Content-Security-Policy
 .github/dependabot.yml           Weekly pull requests when a pinned GitHub Action has an update
 .github/SECURITY.md              How to report a security problem privately
 .htmlvalidate.json               Settings for the HTML check
@@ -153,8 +153,8 @@ Offline support and the install tip also need the local web server, since browse
 The **Site checks** workflow runs on every pull request into `main` (including Dependabot's), every push to `main`, every Monday at 9 AM Eastern, and on demand (**Actions → Site checks → Run workflow**). A newer commit on a pull request cancels that PR's older run. It has three jobs:
 
 - **HTML validation** checks `index.html`, `404.html`, and `privacy/index.html` with [html-validate](https://html-validate.org/). Rules are set in `.htmlvalidate.json`.
-- **Link check** checks every link with [lychee](https://lychee.cli.rs/), including in-page jump links like `#menu`. Settings are in `lychee.toml`, Facebook, Yelp, and TripAdvisor often block automated checkers even when their pages are fine, so those "blocked" responses are treated as OK.
-- **Site files** runs `.github/scripts/check-site.js`, which fails if a file listed in `PRECACHE` (in `sw.js`) is missing, `manifest.webmanifest` or the structured data in `index.html` is not valid JSON, a manifest icon is missing, or a local file referenced by `href` or `src` in a page does not exist. It also fails if a page's footer doesn't link to `/privacy/`, the privacy contact email appears anywhere but the privacy page, or a page (or `styles.css`) loads something from another origin other than the Google Maps embed. It skips the `.git`, `node_modules`, and `.lighthouseci` folders.
+- **Link check** checks every link with [lychee](https://lychee.cli.rs/), including in-page jump links like `#menu`. Settings are in `lychee.toml`. Facebook, Yelp, and TripAdvisor often block automated checkers even when their pages are fine, so those "blocked" responses are treated as OK.
+- **Site files** runs `.github/scripts/check-site.js`, which fails if a file listed in `PRECACHE` (in `sw.js`) is missing, `manifest.webmanifest` or the structured data in `index.html` is not valid JSON, a manifest icon is missing, or a local file referenced by `href` or `src` in a page does not exist. It also fails if a page's footer doesn't link to `/privacy/`, the privacy contact email appears anywhere but the privacy page, or a page (or `styles.css`) loads something from another origin other than the Google Maps embed. It reads attributes however they're quoted (`"..."`, `'...'`, or no quotes). It also fails if a page's Content-Security-Policy is missing, allows a wildcard (`*`), a whole scheme (`https:`, `http:`, `data:`, `blob:`), any `'unsafe-...'` keyword, or any source other than `'self'`, `'none'`, and the Google Maps embed, or lacks `object-src 'none'`, `base-uri 'self'`, or `form-action 'none'`. Finally, it fails if `app.js` or `sw.js` names an outside address anywhere, comments included, other than the Google Maps embed. It skips the `.git`, `node_modules`, and `.lighthouseci` folders.
 
 If a check fails, GitHub emails the repo owner. Open the failed run in the Actions tab to see which line or link caused it.
 
