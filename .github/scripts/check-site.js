@@ -140,7 +140,9 @@ for (const fp of FOOTER_PAGES) {
 for (const file of pages) {
   const html = file === 'index.html' ? indexHtml : read(file);
   if (html === null) continue;
-  const footer = html.match(/<footer[\s>][\s\S]*?<\/footer>/);
+  // Drop HTML comments first, so a link that only exists inside <!-- ... -->
+  // (or a commented-out </footer>) can't satisfy or cut short the checks below
+  const footer = html.replace(/<!--[\s\S]*?-->/g, '').match(/<footer[\s>][\s\S]*?<\/footer>/);
   if (!footer) {
     problems.push(`${file}: no <footer> found, so there are no links to the privacy and accessibility pages`);
     continue;

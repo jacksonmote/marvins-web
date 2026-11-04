@@ -255,6 +255,12 @@ main > section, .visit { margin-top: clamp(3rem, 8vw, 5.5rem); }
     white-space: nowrap;
 }
 .cat-nav a:hover { color: var(--accent-text); }
+/* The bar scrolls sideways, which clips anything drawn outside it, so the focus
+   outline is drawn inside the link (clear of the bottom border) and the link and
+   bar get side room only while focused. Padding plus an equal negative margin
+   leaves the text where it was. */
+.cat-nav ul:focus-within { padding-inline: .5rem; margin-inline: -.5rem; }
+.cat-nav a:focus-visible { outline-offset: -5px; padding-inline: .5rem; margin-inline: -.5rem; }
 
 .signature {
     background: var(--accent-fill);
