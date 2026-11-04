@@ -255,6 +255,12 @@ main > section, .visit { margin-top: clamp(3rem, 8vw, 5.5rem); }
     white-space: nowrap;
 }
 .cat-nav a:hover { color: var(--accent-text); }
+/* The bar scrolls sideways, which clips anything drawn outside it, so the focus
+   outline is drawn inside the link (clear of the bottom border) and the link and
+   bar get side room only while focused. Padding plus an equal negative margin
+   leaves the text where it was. */
+.cat-nav ul:focus-within { padding-inline: .5rem; margin-inline: -.5rem; }
+.cat-nav a:focus-visible { outline-offset: -5px; padding-inline: .5rem; margin-inline: -.5rem; }
 
 .signature {
     background: var(--accent-fill);
@@ -429,6 +435,7 @@ footer .tagline {
 }
 #disclaimer p { margin: 0; }
 footer .footer-links { margin: 1.25rem 0 0; font-size: .9rem; }
+footer .footer-links > [aria-hidden="true"] { margin: 0 .35rem; } /* the dot between Privacy and Accessibility */
 footer a { color: #fff; text-underline-offset: 3px; }
 footer a:focus-visible { outline-color: #fff; }
 footer [aria-current="page"] { font-weight: 700; }
@@ -479,6 +486,9 @@ footer [aria-current="page"] { font-weight: 700; }
     .call-bar:focus-visible { outline: 3px solid #fff; outline-offset: -6px; }
     /* Keep the footer from hiding behind the bar */
     body { padding-bottom: calc(3.4rem + env(safe-area-inset-bottom, 0px)); }
+    /* When Tab moves focus down the page, stop short of the bar so it never covers
+       the focused link (bar height plus room for the focus outline) */
+    html { scroll-padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* ---------- 404 page ---------- */

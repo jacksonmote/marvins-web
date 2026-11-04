@@ -7,13 +7,14 @@
  * Bump CACHE_VERSION when the PRECACHE list below changes. Bump it also to
  * clear every visitor's saved copies if a bad version was ever cached.
  */
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v7';
 const CACHE = `marvins-${CACHE_VERSION}`;
 const NETWORK_TIMEOUT_MS = 4000;
 
 const PRECACHE = [
   '/',
   '/privacy/',
+  '/accessibility/',
   '/styles.css',
   '/app.js',
   '/404.html',

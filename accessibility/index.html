@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>Accessibility | Marvin's Restaurant</title>
+    <meta name="description" content="How this site works with keyboards, screen readers, zoom and dark mode, its known limits, and how to report anything that's hard to use.">
+    <link rel="canonical" href="https://marvinsgreencastle.com/accessibility/">
+    <!-- Paths start with / because this page is served from a subfolder -->
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+    <link rel="icon" href="/assets/favicon-192.png" type="image/png" sizes="192x192">
+    <!-- Home screen install (manifest, icons, app-mode colors) -->
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#1e2547" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#131830" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-title" content="Marvin's">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preload" href="/assets/fonts/bowlby-one-400.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/libre-franklin-400.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/libre-franklin-600.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/libre-franklin-700.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="topbar">
+        <a class="wordmark" href="/">Marvin's Restaurant</a>
+        <nav aria-label="Main">
+            <ul>
+                <li><a href="/#menu">Menu</a></li>
+                <li><a href="/#hours">Hours</a></li>
+                <li><a href="/#location">Location</a></li>
+                <li><a href="/#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="main">
+        <section class="privacy" aria-labelledby="accessibility-h">
+            <p class="back"><a href="/">&larr; Back to the homepage</a></p>
+            <h1 id="accessibility-h">Accessibility</h1>
+            <p class="updated">Last reviewed <time datetime="2026-11-04">Nov 4, 2026</time></p>
+
+            <h2>The goal</h2>
+            <p>This site aims to meet the Web Content Accessibility Guidelines (WCAG) 2.2 at Level AA, so anyone can read the menu, check the hours and find Marvin&rsquo;s, whatever device or assistive technology they use. It&rsquo;s a goal, not a promise: the site hasn&rsquo;t had a professional accessibility audit, and some things are still known to fall short (see &ldquo;Known limits&rdquo; below).</p>
+
+            <h2>What the site does</h2>
+            <ul>
+                <li>Every link and button on the site works with a keyboard, and the one in focus gets a visible outline. On the home page, the Privacy page and this page, the first press of Tab shows a skip link that jumps past the top bar (on the home page it goes straight to the menu). On phones, the page scrolls so the pinned &ldquo;Call to order&rdquo; button doesn&rsquo;t cover the link or button in focus.</li>
+                <li>Pages use headings and landmarks (top bar, navigation, main content, footer), so screen readers can announce the layout and jump between sections. The hours are a table with a row heading for each day or group of days.</li>
+                <li>Images have text descriptions, and decorative icons are hidden from screen readers.</li>
+                <li>Text colors were checked for WCAG AA contrast in both light and dark mode.</li>
+                <li>The site follows your device&rsquo;s light or dark setting.</li>
+                <li>Text can be zoomed to 200%, and every page fits screens as narrow as 320 pixels, without scrolling sideways. (On narrow screens, the menu&rsquo;s category bar scrolls sideways on its own.)</li>
+                <li>Nothing plays, flashes or animates on its own. Jump links scroll smoothly, unless your device is set to reduce motion.</li>
+                <li>The menu prints as a two-page, black-and-white copy, with the address, phone number and hours at the top.</li>
+                <li>The phone number is text and a tap-to-call link. The address is text, with a &ldquo;Get directions&rdquo; link just below it.</li>
+                <li>Lighthouse checks every proposed change to the site automatically, including its accessibility audit (built on the axe testing engine). Fuller checks with axe, a keyboard and zoom are done by hand when this page is reviewed.</li>
+            </ul>
+
+            <h2>Known limits</h2>
+            <ul>
+                <li>The map in the Location section is embedded from Google Maps, and this site doesn&rsquo;t control it. It may not work well with a screen reader or keyboard, and it stays light in dark mode. The address and a &ldquo;Get directions&rdquo; link are right above it as text, and the phone number is in the Contact section below it.</li>
+                <li>On phones that can add the site to the home screen, a tip about doing that can appear at the bottom of the home page. Screen readers aren&rsquo;t told when it appears, and it covers part of the page until you close it with its &times; button (labeled &ldquo;Dismiss&rdquo;). After that, it stays hidden for 30 days.</li>
+                <li>On the home page, links to other sites (Facebook, Yelp, TripAdvisor, goputnam.com, Etsy and Google Maps) open in a new tab without saying so. Those sites aren&rsquo;t covered by this page.</li>
+            </ul>
+
+            <h2>Feedback</h2>
+            <p>If something here is hard to use, or doesn&rsquo;t work with your device or assistive technology, please let the site maintainer know. The email address is in the <a href="/privacy/#contact">Contact section of the Privacy page</a>. It helps to mention the page, what you were trying to do and what you use to browse (for example, a screen reader or zoom).</p>
+            <p>This is an unofficial fan site, not affiliated with Marvin&rsquo;s.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p class="tagline">Marvin's Delivers since 1972</p>
+
+        <!-- Disclaimer -->
+        <section id="disclaimer">
+            <h2>Disclaimer</h2>
+            <p>This website is an independently created informational resource and is not officially affiliated, associated, or endorsed by Marvin's restaurant in Greencastle, Indiana, or any of its owners or employees. The content provided on this site, including but not limited to the menu items, operating hours, pricing, and location details, is intended for general informational purposes only and may be subject to change without notice. Please contact Marvin's directly for the most up-to-date information.</p>
+        </section>
+        <p class="footer-links"><a href="/privacy/">Privacy</a> <span aria-hidden="true">&middot;</span> <span aria-current="page">Accessibility</span></p>
+    </footer>
+</body>
+</html>
