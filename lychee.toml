@@ -13,3 +13,8 @@ timeout = 30
 
 # Treat links to a folder (like "/#menu" on the 404 page) as that folder's index.html.
 index_files = ["index.html"]
+
+# The accessibility page's canonical URL points at the page itself, which returns
+# 404 until it is merged and deployed, so it is skipped. Remove this once the page
+# is live.
+exclude = ['^https://marvinsgreencastle\.com/accessibility/$']
