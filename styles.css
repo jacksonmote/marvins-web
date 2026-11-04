@@ -480,6 +480,9 @@ footer [aria-current="page"] { font-weight: 700; }
     .call-bar:focus-visible { outline: 3px solid #fff; outline-offset: -6px; }
     /* Keep the footer from hiding behind the bar */
     body { padding-bottom: calc(3.4rem + env(safe-area-inset-bottom, 0px)); }
+    /* When Tab moves focus down the page, stop short of the bar so it never covers
+       the focused link (bar height plus room for the focus outline) */
+    html { scroll-padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* ---------- 404 page ---------- */
