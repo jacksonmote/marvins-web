@@ -5,7 +5,8 @@
 // Exits with code 1 and a message for each problem found.
 //
 // It also guards what the privacy page (privacy/index.html) promises: every
-// page's footer links to it, its contact email appears nowhere else, and no
+// page's footer links to it (and to the accessibility page,
+// accessibility/index.html), its contact email appears nowhere else, and no
 // page loads anything from another origin except the Google Maps embed.
 // And it keeps every page's Content-Security-Policy strict (see h below) and
 // makes sure app.js and sw.js name no outside address (see i).
@@ -125,20 +126,33 @@ for (const file of pages) {
   }
 }
 
-// e. Every page's footer links to the privacy page (the privacy page itself shows
-// "Privacy" as plain text marked aria-current="page")
-if (!pages.includes(PRIVACY_PAGE)) problems.push(`${PRIVACY_PAGE}: the privacy page is missing`);
+// e. Every page's footer links to the privacy page and the accessibility page.
+// On each of those two pages, its own footer entry is plain text instead of a
+// link: <span aria-current="page">Privacy</span> (or Accessibility).
+const ACCESSIBILITY_PAGE = 'accessibility/index.html';
+const FOOTER_PAGES = [
+  { file: PRIVACY_PAGE, href: '/privacy/', label: 'Privacy' },
+  { file: ACCESSIBILITY_PAGE, href: '/accessibility/', label: 'Accessibility' },
+];
+for (const fp of FOOTER_PAGES) {
+  if (!pages.includes(fp.file)) problems.push(`${fp.file}: the ${fp.label.toLowerCase()} page is missing`);
+}
 for (const file of pages) {
   const html = file === 'index.html' ? indexHtml : read(file);
   if (html === null) continue;
   const footer = html.match(/<footer[\s>][\s\S]*?<\/footer>/);
   if (!footer) {
-    problems.push(`${file}: no <footer> found, so there is no link to the privacy page`);
-  } else if (file === PRIVACY_PAGE) {
-    if (!/aria-current="page"/.test(footer[0])) problems.push(`${file}: the footer should show "Privacy" as plain text with aria-current="page"`);
-    if (/href="\/privacy\/"/.test(footer[0])) problems.push(`${file}: the footer should not link to the page itself`);
-  } else if (!/href="\/privacy\/"/.test(footer[0])) {
-    problems.push(`${file}: the footer must link to the privacy page (href="/privacy/")`);
+    problems.push(`${file}: no <footer> found, so there are no links to the privacy and accessibility pages`);
+    continue;
+  }
+  for (const fp of FOOTER_PAGES) {
+    const linksHere = footer[0].includes(`href="${fp.href}"`);
+    if (file === fp.file) {
+      if (!footer[0].includes(`<span aria-current="page">${fp.label}</span>`)) problems.push(`${file}: the footer should show "${fp.label}" as plain text: <span aria-current="page">${fp.label}</span>`);
+      if (linksHere) problems.push(`${file}: the footer should not link to the page itself (href="${fp.href}")`);
+    } else if (!linksHere) {
+      problems.push(`${file}: the footer must link to the ${fp.label.toLowerCase()} page (href="${fp.href}")`);
+    }
   }
 }
 
@@ -297,4 +311,4 @@ if (problems.length > 0) {
   for (const p of problems) console.error(`  - ${p}`);
   process.exit(1);
 }
-console.log('Site file check passed: PRECACHE files, manifest, JSON-LD, local references, privacy links, outside requests, Content-Security-Policy, and outside addresses in app.js and sw.js are all fine.');
+console.log('Site file check passed: PRECACHE files, manifest, JSON-LD, local references, privacy and accessibility footer links, outside requests, Content-Security-Policy, and outside addresses in app.js and sw.js are all fine.');

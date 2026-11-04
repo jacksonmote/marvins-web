@@ -1,7 +1,7 @@
-# Runs Lighthouse on the homepage, the privacy page, and the 404 page, on mobile
-# and desktop, so a change that lowers a score is caught before it reaches main.
-# Runs on every pull request into main, every push to main, and on demand
-# (Actions tab > Lighthouse > Run workflow).
+# Runs Lighthouse on the homepage, the privacy page, the accessibility page, and
+# the 404 page, on mobile and desktop, so a change that lowers a score is caught
+# before it reaches main. Runs on every pull request into main, every push to
+# main, and on demand (Actions tab > Lighthouse > Run workflow).
 #
 # Settings and score thresholds are in .github/lighthouse/lighthouserc.json (not
 # the repo root, which GitHub Pages publishes). Reports are saved as a workflow
@@ -64,8 +64,8 @@ jobs:
 
       # Lighthouse CI serves the repo root as a static site (no build step), so
       # /privacy/ loads privacy/index.html the way GitHub Pages does. 3 runs per page.
-      - name: Run Lighthouse on / and /privacy/
-        run: $LHCI collect --config=$CONFIG ${{ matrix.preset }} --url=http://localhost/ --url=http://localhost/privacy/
+      - name: Run Lighthouse on /, /privacy/, and /accessibility/
+        run: $LHCI collect --config=$CONFIG ${{ matrix.preset }} --url=http://localhost/ --url=http://localhost/privacy/ --url=http://localhost/accessibility/
 
       # The 404 page is collected separately so two SEO audits can be turned off
       # for it alone (they stay on for the other pages):

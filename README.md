@@ -29,6 +29,7 @@
 - Links to Facebook, Yelp, TripAdvisor, goputnam.com, and Marvin's merchandise on Etsy
 - Custom 404 page for mistyped addresses
 - Plain-language privacy page at `/privacy/`, linked from every page's footer: no cookies, analytics, ads, or trackers, plus what Google Maps and GitHub (the host) do.
+- Accessibility statement at `/accessibility/`, linked from every page's footer next to Privacy: the goal (WCAG 2.2 Level AA), what the site does for keyboard, screen reader, zoom, and dark-mode users, its known limits (such as the Google map), and how to send feedback.
 - Installable on phones: add it to the home screen and it opens full-screen like an app, with its own Marvin's icon
 - Works offline once visited: the menu, prices, and hours load with no signal (the map needs a connection)
 - Install tip that shows each phone the right steps: on iPhone and iPad, Safari, Chrome, and other browsers each get their own Share-menu instructions (in-app browsers such as Facebook's can't install, so they get no tip), and Android gets an Install button
@@ -72,22 +73,23 @@ index.html                       The whole site: menu, specials, hours, location
 styles.css                       All styling, including the print layout; shared by every page
 404.html                         Page shown for any address that doesn't exist
 privacy/index.html               Privacy policy, served at /privacy/ (the only place the privacy contact email appears)
+accessibility/index.html         Accessibility statement, served at /accessibility/
 robots.txt                       Tells search engines they can crawl the site
 sitemap.xml                      Lists the pages for search engines
 CNAME                            Points GitHub Pages at marvinsgreencastle.com
 .nojekyll                        Tells GitHub Pages to serve the files as-is (no Jekyll processing)
 LICENSE                          MIT license for the code (see License)
 AGENTS.md                        How to work on the repo (change checklist and rules that must not break), for people and coding agents
-app.js                           Print button, scroll-to-load map, offline setup, app-mode detection, and the install tip; loaded by index.html and 404.html (the privacy page runs no script)
+app.js                           Print button, scroll-to-load map, offline setup, app-mode detection, and the install tip; loaded by index.html and 404.html (the privacy and accessibility pages run no script)
 sw.js                            Service worker: saves the site for offline use
 manifest.webmanifest             App name, colors, and icons for home-screen installs
 favicon.ico                      Browser-tab and Google search icon (16, 32, and 48 px)
 assets/                          Banner (JPEG plus 480, 800, and 1200 px WebP versions), install-tip icon (install-tip-icon.webp), large favicon, and home-screen icons
 assets/fonts/                    Self-hosted WOFF2 fonts (Bowlby One, Libre Franklin) and their OFL license
 .github/workflows/site-checks.yml  Automated HTML, link, and site-file checks
-.github/workflows/lighthouse.yml   Automated Lighthouse scores for the homepage, privacy page, and 404 page
+.github/workflows/lighthouse.yml   Automated Lighthouse scores for the homepage, privacy page, accessibility page, and 404 page
 .github/lighthouse/lighthouserc.json  Lighthouse CI settings and minimum scores (kept out of the repo root so the site doesn't publish it)
-.github/scripts/check-site.js    Checks offline files, manifest, structured data, local file references, privacy links, outside requests, and the Content-Security-Policy
+.github/scripts/check-site.js    Checks offline files, manifest, structured data, local file references, privacy and accessibility footer links, outside requests, and the Content-Security-Policy
 .github/tools/package.json       CI-only tools (html-validate, Lighthouse CI) at exact versions; not part of the website
 .github/tools/package-lock.json  Exact versions of those tools and everything they depend on
 .github/tools/.npmrc             Makes npm skip package install scripts for these tools
@@ -118,9 +120,9 @@ Everything below is in `index.html` unless noted. Before opening a pull request,
 
 **Address or phone.** These also appear in several places: the hero and contact buttons, the pinned call bar (in both `index.html` and `404.html`), the print header, the "Get directions" links, the map, and the structured data. Search the files for the old value to find them all.
 
-**New outside services.** The pages have a Content-Security-Policy (a `<meta http-equiv="Content-Security-Policy">` tag near the top of `<head>`) that only allows the site's own files and the Google Maps embed (only the `/maps/embed` address on google.com can be framed). If you add another embed, analytics, a font host, or anything else loaded from outside, add its address to the policy on **every** page (`index.html`, `404.html`, and `privacy/index.html`), or browsers will block it. `check-site.js` fails if any page's policy allows an outside address other than the Google Maps embed (and if `app.js` or `sw.js` names any outside address), so update that check too, along with the privacy page (see below). The same goes for inline scripts, inline styles, and `style="..."` attributes: put them in `app.js` or `styles.css` instead.
+**New outside services.** The pages have a Content-Security-Policy (a `<meta http-equiv="Content-Security-Policy">` tag near the top of `<head>`) that only allows the site's own files and the Google Maps embed (only the `/maps/embed` address on google.com can be framed). If you add another embed, analytics, a font host, or anything else loaded from outside, add its address to the policy on **every** page (`index.html`, `404.html`, `privacy/index.html`, and `accessibility/index.html`), or browsers will block it. `check-site.js` fails if any page's policy allows an outside address other than the Google Maps embed (and if `app.js` or `sw.js` names any outside address), so update that check too, along with the privacy page (see below). The same goes for inline scripts, inline styles, and `style="..."` attributes: put them in `app.js` or `styles.css` instead.
 
-**Fonts.** The Bowlby One and Libre Franklin (400, 600, 700) font files are preloaded with `<link rel="preload">` tags near the top of the `<head>` in `index.html` and `privacy/index.html`, so the text doesn't jump when the fonts load. If you rename or replace a font file, update its preload tags, the `@font-face` rule in `styles.css`, and `PRECACHE` in `sw.js`.
+**Fonts.** The Bowlby One and Libre Franklin (400, 600, 700) font files are preloaded with `<link rel="preload">` tags near the top of the `<head>` in `index.html`, `privacy/index.html`, and `accessibility/index.html`, so the text doesn't jump when the fonts load. If you rename or replace a font file, update its preload tags, the `@font-face` rule in `styles.css`, and `PRECACHE` in `sw.js`.
 
 **Adding images or other files.** Offline support saves a fixed list of files, set in `PRECACHE` at the top of `sw.js`. If you add a new image or file the page depends on, add it to that list and change `CACHE_VERSION` (for example, `v1` to `v2`) so phones pick up the new list. Offline support only saves files from that list, one copy of each: a visit with a query string (such as `?fbclid=` from Facebook or `?utm_source=`) updates that same copy instead of adding a new one. Bumping `CACHE_VERSION` also clears every phone's saved copies, which is the quick fix if a broken page was ever saved. Editing existing files, including menu and price changes, needs nothing extra.
 
@@ -134,7 +136,9 @@ Everything below is in `index.html` unless noted. Before opening a pull request,
 
 **Install tip wording.** The instructions for each browser are in `index.html`, in the `install-tip` block near the bottom. `app.js` decides which version each phone sees.
 
-**Privacy page.** `privacy/index.html` is a plain-language policy that has to stay true. If a change adds a script, analytics, cookies, storage, an embed, or any third-party request, update the privacy page text and its "Last updated" date (the `<time datetime>` element) in the same pull request, and set the `privacy/` `<lastmod>` in `sitemap.xml` to match. The privacy contact email appears on that page only, never in the footer, README, or elsewhere. Every page's footer links to `/privacy/` (the privacy page shows "Privacy" as plain text with `aria-current="page"`), and `check-site.js` fails if a footer link is missing, the email shows up on another page, or a page loads anything from another origin besides the Google Maps embed.
+**Privacy page.** `privacy/index.html` is a plain-language policy that has to stay true. If a change adds a script, analytics, cookies, storage, an embed, or any third-party request, update the privacy page text and its "Last updated" date (the `<time datetime>` element) in the same pull request, and set the `privacy/` `<lastmod>` in `sitemap.xml` to match. The privacy contact email appears on that page only, never in the footer, README, or elsewhere. Every page's footer links to `/privacy/` (the privacy page shows "Privacy" as plain text with `aria-current="page"`), and `check-site.js` fails if a footer link is missing, the email shows up on another page, or a page loads anything from another origin besides the Google Maps embed. Its Contact heading has `id="contact"`, because the accessibility page links to `/privacy/#contact`.
+
+**Accessibility page.** `accessibility/index.html` is a plain-language accessibility statement that also has to stay true. It states a goal (WCAG 2.2 Level AA) and never claims the site is "compliant", "conforms", or is "fully accessible". Update it when a change affects how people use the site: a new embed, a new interactive feature (a button, pop-up, form, or anything else people use), a new known limit, or a fix for one listed under "Known limits". In the same pull request, update its "Last reviewed" date (the `<time datetime>` element) and set the `accessibility/` `<lastmod>` in `sitemap.xml` to match. It sends feedback to the Contact section of the privacy page instead of naming an email address, because the privacy contact email appears only on the privacy page. Every page's footer links to `/accessibility/` next to `/privacy/` (the accessibility page shows "Accessibility" as plain text with `aria-current="page"`), and `check-site.js` fails if that link is missing.
 
 **After any content change**, update the `<lastmod>` date in `sitemap.xml` to the current date so search engines know to re-check the page.
 
@@ -142,13 +146,13 @@ Everything below is in `index.html` unless noted. Before opening a pull request,
 
 Open `index.html` in any browser to check your content changes. To preview the printed menu, use your browser's Print Preview (Ctrl+P). The page links to `app.js` and the icons with paths that start with `/`, so the **Print the menu** button, offline support, and the install tip only work through the local web server below.
 
-`404.html` and `privacy/index.html` use paths that start with `/`, so they only look right when served from a local web server. From the project folder, run:
+`404.html`, `privacy/index.html`, and `accessibility/index.html` use paths that start with `/`, so they only look right when served from a local web server. From the project folder, run:
 
 ```bash
 python -m http.server
 ```
 
-Then visit `http://localhost:8000/404.html` or `http://localhost:8000/privacy/`.
+Then visit `http://localhost:8000/404.html`, `http://localhost:8000/privacy/`, or `http://localhost:8000/accessibility/`.
 
 Offline support and the install tip also need the local web server, since browsers only allow them on `https://` sites and `localhost`. After a change, if the page looks out of date, do a hard refresh (Ctrl+Shift+R, or Cmd+Shift+R on Mac) so the browser skips its saved copy. To test offline mode, open the page once, stop the server, and reload.
 
@@ -156,9 +160,9 @@ Offline support and the install tip also need the local web server, since browse
 
 The **Site checks** workflow runs on every pull request into `main` (including Dependabot's), every push to `main`, every Monday at 13:00 UTC (9 AM Eastern during daylight saving time, 8 AM otherwise), and on demand (**Actions → Site checks → Run workflow**). A newer commit on a pull request cancels that PR's older run. It has three jobs:
 
-- **HTML validation** checks `index.html`, `404.html`, and `privacy/index.html` with [html-validate](https://html-validate.org/). Rules are set in `.htmlvalidate.json`.
-- **Link check** checks every link with [lychee](https://lychee.cli.rs/), including in-page jump links like `#menu`. Settings are in `lychee.toml`. Facebook, Yelp, and TripAdvisor often block automated checkers even when their pages are fine, so those "blocked" responses are treated as OK.
-- **Site files** runs `.github/scripts/check-site.js`, which fails if a file listed in `PRECACHE` (in `sw.js`) is missing, `manifest.webmanifest` or the structured data in `index.html` is not valid JSON, a manifest icon is missing, or a local file referenced by `href` or `src` in a page does not exist. It also fails if a page's footer doesn't link to `/privacy/`, the privacy contact email appears anywhere but the privacy page, or a page (or `styles.css`) loads something from another origin other than the Google Maps embed. The local-file and outside-origin checks, and the Content-Security-Policy check below, read attributes however they're quoted (`"..."`, `'...'`, or no quotes); the footer and structured-data checks expect double quotes. It also fails if a page's Content-Security-Policy is missing, allows a wildcard (`*`), a whole scheme (`https:`, `http:`, `data:`, `blob:`), any keyword containing `unsafe` (such as `'unsafe-inline'` or `'wasm-unsafe-eval'`), or any source other than `'self'`, `'none'`, and the Google Maps embed (allowed in `frame-src` only), sets the same directive twice, or lacks `object-src 'none'`, `base-uri 'self'`, or `form-action 'none'`. Finally, it fails if `app.js` or `sw.js` names an outside address anywhere, comments included, other than the Google Maps embed. It skips the `.git`, `node_modules`, and `.lighthouseci` folders.
+- **HTML validation** checks `index.html`, `404.html`, `privacy/index.html`, and `accessibility/index.html` with [html-validate](https://html-validate.org/). Rules are set in `.htmlvalidate.json`.
+- **Link check** checks every link with [lychee](https://lychee.cli.rs/), including jump links like `#menu` and `/privacy/#contact`. Settings are in `lychee.toml`. Facebook, Yelp, and TripAdvisor often block automated checkers even when their pages are fine, so those "blocked" responses are treated as OK.
+- **Site files** runs `.github/scripts/check-site.js`, which fails if a file listed in `PRECACHE` (in `sw.js`) is missing, `manifest.webmanifest` or the structured data in `index.html` is not valid JSON, a manifest icon is missing, or a local file referenced by `href` or `src` in a page does not exist. It also fails if a page's footer doesn't link to both `/privacy/` and `/accessibility/` (on those two pages, the page's own entry must be plain text marked `aria-current="page"` instead of a link), the privacy contact email appears anywhere but the privacy page, or a page (or `styles.css`) loads something from another origin other than the Google Maps embed. The local-file and outside-origin checks, and the Content-Security-Policy check below, read attributes however they're quoted (`"..."`, `'...'`, or no quotes); the footer and structured-data checks expect double quotes. It also fails if a page's Content-Security-Policy is missing, allows a wildcard (`*`), a whole scheme (`https:`, `http:`, `data:`, `blob:`), any keyword containing `unsafe` (such as `'unsafe-inline'` or `'wasm-unsafe-eval'`), or any source other than `'self'`, `'none'`, and the Google Maps embed (allowed in `frame-src` only), sets the same directive twice, or lacks `object-src 'none'`, `base-uri 'self'`, or `form-action 'none'`. Finally, it fails if `app.js` or `sw.js` names an outside address anywhere, comments included, other than the Google Maps embed. It skips the `.git`, `node_modules`, and `.lighthouseci` folders.
 
 If a check fails, GitHub emails the repo owner. Open the failed run in the Actions tab to see which line or link caused it.
 
@@ -171,7 +175,7 @@ npm ci --ignore-scripts --prefix .github/tools
 Then:
 
 ```bash
-.github/tools/node_modules/.bin/html-validate index.html 404.html privacy/index.html
+.github/tools/node_modules/.bin/html-validate index.html 404.html privacy/index.html accessibility/index.html
 node .github/scripts/check-site.js
 ```
 
@@ -207,7 +211,7 @@ GitHub pauses scheduled workflows after 60 days without commits. If that happens
 
 ### Lighthouse
 
-The **Lighthouse** workflow runs [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) on every pull request into `main`, every push to `main`, and on demand (**Actions → Lighthouse → Run workflow**). It serves the repo as a static site and tests `/`, `/privacy/`, and `/404.html` three times each, once with phone settings and once with desktop settings. A run fails if, for any page:
+The **Lighthouse** workflow runs [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) on every pull request into `main`, every push to `main`, and on demand (**Actions → Lighthouse → Run workflow**). It serves the repo as a static site and tests `/`, `/privacy/`, `/accessibility/`, and `/404.html` three times each, once with phone settings and once with desktop settings. A run fails if, for any page:
 
 - Accessibility, Best Practices, or SEO is below 100
 - Performance is below 90 (below 100 only shows a warning, since GitHub's machines vary from run to run)
@@ -218,7 +222,7 @@ Settings and minimum scores are in `.github/lighthouse/lighthouserc.json`. On th
 To run it locally (requires Node.js and Chrome), first install the CI tools from the project folder with `npm ci --ignore-scripts --prefix .github/tools` (see [Automated checks](#automated-checks)). Then:
 
 ```bash
-.github/tools/node_modules/.bin/lhci collect --config=.github/lighthouse/lighthouserc.json --url=http://localhost/ --url=http://localhost/privacy/
+.github/tools/node_modules/.bin/lhci collect --config=.github/lighthouse/lighthouserc.json --url=http://localhost/ --url=http://localhost/privacy/ --url=http://localhost/accessibility/
 .github/tools/node_modules/.bin/lhci collect --config=.github/lighthouse/lighthouserc.json --additive --url=http://localhost/404.html --collect.settings.skipAudits=is-crawlable --collect.settings.skipAudits=meta-description
 .github/tools/node_modules/.bin/lhci assert --config=.github/lighthouse/lighthouserc.json
 ```

@@ -429,6 +429,7 @@ footer .tagline {
 }
 #disclaimer p { margin: 0; }
 footer .footer-links { margin: 1.25rem 0 0; font-size: .9rem; }
+footer .footer-links > [aria-hidden="true"] { margin: 0 .35rem; } /* the dot between Privacy and Accessibility */
 footer a { color: #fff; text-underline-offset: 3px; }
 footer a:focus-visible { outline-color: #fff; }
 footer [aria-current="page"] { font-weight: 700; }

@@ -45,7 +45,7 @@ jobs:
       # package scripts blocked.
       - run: npm ci --ignore-scripts --prefix .github/tools
       # Rules are configured in .htmlvalidate.json
-      - run: .github/tools/node_modules/.bin/html-validate index.html 404.html privacy/index.html
+      - run: .github/tools/node_modules/.bin/html-validate index.html 404.html privacy/index.html accessibility/index.html
 
   links:
     name: Link check
@@ -64,7 +64,7 @@ jobs:
             --config lychee.toml
             --root-dir ${{ github.workspace }}
             --no-progress
-            index.html 404.html privacy/index.html
+            index.html 404.html privacy/index.html accessibility/index.html
 
   files:
     name: Site files
@@ -80,5 +80,6 @@ jobs:
         with:
           node-version: 22
       # Offline file list, manifest, structured data, local file references,
-      # privacy links, outside requests, and the Content-Security-Policy
+      # privacy and accessibility footer links, outside requests, and the
+      # Content-Security-Policy
       - run: node .github/scripts/check-site.js
