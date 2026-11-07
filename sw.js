@@ -3,6 +3,8 @@
  * Strategy: network first. When the phone is online, every request goes to
  * the live site, so menu and price updates show up immediately. The saved
  * copy is only used when there's no connection (or it's too slow to answer).
+ * When it's too slow, the network's answer is still saved when it arrives, so
+ * the next visit gets the newer copy.
  *
  * Bump CACHE_VERSION when the PRECACHE list below changes. Bump it also to
  * clear every visitor's saved copies if a bad version was ever cached.
@@ -56,37 +58,45 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Try the network, but give up after a few seconds on a weak signal
-function fetchWithTimeout(request) {
+// Give up waiting after a few seconds on a weak signal
+function withTimeout(promise) {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error('timeout')), NETWORK_TIMEOUT_MS);
-    fetch(request).then(
+    promise.then(
       (response) => { clearTimeout(timer); resolve(response); },
       (err) => { clearTimeout(timer); reject(err); }
     );
   });
 }
 
-async function networkFirst(request) {
-  const cache = await caches.open(CACHE);
-  try {
-    const response = await fetchWithTimeout(request);
-    // Only save the site's own listed files, and only complete responses.
-    // Save under the path alone, so links with ?fbclid= or ?utm_ tags
-    // replace the one saved copy instead of adding another.
-    const url = new URL(request.url);
-    if (response && response.status === 200 && PRECACHED.has(url.pathname)) {
-      cache.put(url.pathname, response.clone()).catch(() => {});
+function networkFirst(event) {
+  const { request } = event;
+  const url = new URL(request.url);
+  // Ask the network. Only save the site's own listed files, and only
+  // complete responses. Save under the path alone, so links with ?fbclid= or
+  // ?utm_ tags replace the one saved copy instead of adding another.
+  let saving = Promise.resolve();
+  const network = fetch(request).then((response) => {
+    if (response.status === 200 && PRECACHED.has(url.pathname)) {
+      const copy = response.clone();
+      saving = caches.open(CACHE).then((cache) => cache.put(url.pathname, copy));
     }
     return response;
-  } catch (err) {
+  });
+  // Keep the worker running until the response arrives and is saved, even if
+  // the saved copy was already shown because the network was too slow; that
+  // way the next visit gets the newer copy.
+  event.waitUntil(network.then(() => saving).catch(() => {}));
+
+  return withTimeout(network).catch(async (err) => {
+    const cache = await caches.open(CACHE);
     const cached = await cache.match(request, { ignoreSearch: true });
     if (cached) return cached;
     if (request.mode === 'navigate') {
       return (await cache.match('/')) || (await cache.match('/404.html'));
     }
     throw err;
-  }
+  });
 }
 
 self.addEventListener('fetch', (event) => {
@@ -95,7 +105,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   if (url.origin === self.location.origin) {
-    event.respondWith(networkFirst(request));
+    event.respondWith(networkFirst(event));
   }
   // Everything else (Google Maps, outside links) goes straight to the network
 });
