@@ -67,18 +67,15 @@ jobs:
       - name: Run Lighthouse on /, /privacy/, and /accessibility/
         run: $LHCI collect --config=$CONFIG ${{ matrix.preset }} --url=http://localhost/ --url=http://localhost/privacy/ --url=http://localhost/accessibility/
 
-      # The 404 page is collected separately so two SEO audits can be turned off
-      # for it alone (they stay on for the other pages):
-      # - is-crawlable: the page has <meta name="robots" content="noindex"> on
-      #   purpose, so search engines don't index "Page not found".
-      # - meta-description: search engines never show a description for a
-      #   noindex page, so the page has none.
+      # The 404 page is collected separately so one SEO audit can be turned off
+      # for it alone (it stays on for the other pages): is-crawlable, because
+      # the page has <meta name="robots" content="noindex"> on purpose, so
+      # search engines don't index "Page not found".
       - name: Run Lighthouse on /404.html
         run: >-
           $LHCI collect --config=$CONFIG ${{ matrix.preset }} --additive
           --url=http://localhost/404.html
           --collect.settings.skipAudits=is-crawlable
-          --collect.settings.skipAudits=meta-description
 
       # Save the HTML and JSON reports before checking scores, so they are
       # available even when the check fails

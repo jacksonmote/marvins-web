@@ -4,7 +4,8 @@
 # (Actions tab > Site checks > Run workflow). A failed run emails the repo owner.
 #
 # html-validate is installed from the CI-only lockfile in .github/tools/ with
-# package scripts blocked; nothing is downloaded with npx.
+# package scripts blocked; nothing is downloaded with npx. The lychee version is
+# pinned in the Link check job.
 name: Site checks
 
 on:
@@ -57,9 +58,16 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # Settings are in lychee.toml
+      # Settings are in lychee.toml. The action downloads the lychee program
+      # itself, so its version is set here rather than left to the action's
+      # default; when Dependabot updates the action, raise it by hand (README
+      # "CI tools and updates"). lychee gets no GitHub token (token: ""): it
+      # only uses one to avoid GitHub's rate limits, and the site's few
+      # github.com links stay well under them.
       - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
+          lycheeVersion: v0.24.2
+          token: ""
           args: >-
             --config lychee.toml
             --root-dir ${{ github.workspace }}

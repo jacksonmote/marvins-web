@@ -1,4 +1,17 @@
+# The site's pages, styles, scripts, images and fonts can all be crawled.
+# The repo files below are published by GitHub Pages too, but aren't part of
+# the site, so crawlers are asked to skip them. (Disallow stops crawling; it
+# doesn't guarantee a file never shows up in search results.)
 User-agent: *
+Disallow: /README.md
+Disallow: /AGENTS.md
+Disallow: /LICENSE
+Disallow: /CNAME
+Disallow: /lychee.toml
+Disallow: /.htmlvalidate.json
+Disallow: /.gitignore
+Disallow: /.nojekyll
+Disallow: /assets/fonts/OFL.txt
 Allow: /
 
 Sitemap: https://marvinsgreencastle.com/sitemap.xml
