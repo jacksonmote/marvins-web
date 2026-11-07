@@ -50,8 +50,9 @@
       // sandbox lets the map run as Google's own site and open Google Maps in a
       // new tab, and nothing else: no forms, downloads, dialogs, or taking over
       // this page. (Without allow-same-origin, Google's map code throws errors.)
-      // credentialless (Chrome, Edge and other Chromium browsers; others
-      // ignore it) loads the map without the visitor's Google cookies.
+      // credentialless (Chromium browsers on computers and Android; Firefox and
+      // every iPhone/iPad browser ignore it) loads the map without the
+      // visitor's Google cookies and throws away what it saves on leaving.
       frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox');
       frame.setAttribute('credentialless', '');
       mapFrame.replaceWith(frame);
