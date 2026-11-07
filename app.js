@@ -4,10 +4,21 @@
 
   var root = document.documentElement;
 
-  // 1. Offline support
+  // 1. Offline support. The pages' Content-Security-Policy requires Trusted
+  // Types, so in browsers that support them the worker's address has to come
+  // from this policy, which only ever allows /sw.js.
   if ('serviceWorker' in navigator) {
+    var swUrl = '/sw.js';
+    if (window.trustedTypes && window.trustedTypes.createPolicy) {
+      swUrl = window.trustedTypes.createPolicy('marvins-sw', {
+        createScriptURL: function (url) {
+          if (url === '/sw.js') return url;
+          throw new TypeError('Only /sw.js can be registered');
+        }
+      }).createScriptURL('/sw.js');
+    }
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js').catch(function () {});
+      navigator.serviceWorker.register(swUrl).catch(function () {});
     });
   }
 

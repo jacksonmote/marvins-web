@@ -192,8 +192,25 @@ function checkNotExternal(url, file, what) {
 // 'self', 'none', or the Google Maps embed (in frame-src): no wildcards, no
 // whole schemes (https:, data:, blob:), no keywords containing "unsafe"
 // ('unsafe-inline', 'wasm-unsafe-eval', ...), no other hosts, and no directive
-// set twice. A few directives must be present with exactly these values.
+// set twice. A few directives must be present with exactly these values on
+// every page (CSP_REQUIRED), plus each page's own set (CSP_PAGE_REQUIRED), so
+// the stricter policies can't quietly loosen later:
+// - every page: frame-src is exactly the Maps embed (homepage) or 'none'
+//   (connect-src stays 'self': with 'none', Lighthouse can't download
+//   robots.txt, because Chrome applies the page's connect-src to that request)
+// - homepage and 404 page: they load app.js, which registers the service
+//   worker through the Trusted Types policy named marvins-sw
+// - privacy and accessibility pages: they run no script at all
 const CSP_REQUIRED = { 'object-src': "'none'", 'base-uri': "'self'", 'form-action': "'none'" };
+const CSP_TRUSTED_TYPES = { 'require-trusted-types-for': "'script'", 'trusted-types': 'marvins-sw' };
+const CSP_NO_SCRIPT = { 'script-src': "'none'", 'worker-src': "'none'" };
+const CSP_PAGE_REQUIRED = {
+  'index.html': { 'frame-src': MAPS_EMBED, ...CSP_TRUSTED_TYPES },
+  '404.html': { 'frame-src': "'none'", ...CSP_TRUSTED_TYPES },
+  [PRIVACY_PAGE]: { 'frame-src': "'none'", ...CSP_NO_SCRIPT },
+  'accessibility/index.html': { 'frame-src': "'none'", ...CSP_NO_SCRIPT },
+};
+const CSP_OTHER_PAGE_REQUIRED = { 'frame-src': "'none'" }; // any page not listed above
 const CSP_NOT_SOURCES = new Set(['sandbox', 'require-trusted-types-for', 'trusted-types', 'webrtc']);
 function parseAttributes(tagBody) {
   const attrs = {};
@@ -213,6 +230,7 @@ function checkCsp(html, file) {
     problems.push(`${file}: no Content-Security-Policy meta tag`);
     return;
   }
+  const required = { ...CSP_REQUIRED, ...(CSP_PAGE_REQUIRED[file] || CSP_OTHER_PAGE_REQUIRED) };
   const satisfied = new Set();
   const wrongValue = {};
   for (const policy of policies) {
@@ -227,9 +245,9 @@ function checkCsp(html, file) {
         continue;
       }
       seen.add(name);
-      if (name in CSP_REQUIRED) {
+      if (name in required) {
         const value = sources.join(' ');
-        if (value.toLowerCase() === CSP_REQUIRED[name]) satisfied.add(name);
+        if (value.toLowerCase() === required[name].toLowerCase()) satisfied.add(name);
         else wrongValue[name] = value || '(empty)';
       }
       if (CSP_NOT_SOURCES.has(name)) continue;
@@ -250,7 +268,7 @@ function checkCsp(html, file) {
       }
     }
   }
-  for (const [name, value] of Object.entries(CSP_REQUIRED)) {
+  for (const [name, value] of Object.entries(required)) {
     if (satisfied.has(name)) continue;
     if (name in wrongValue) problems.push(`${file}: the Content-Security-Policy has ${name} ${wrongValue[name]}; it must be exactly ${name} ${value}`);
     else problems.push(`${file}: the Content-Security-Policy is missing ${name} ${value}`);
