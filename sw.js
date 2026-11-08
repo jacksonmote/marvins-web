@@ -4,7 +4,9 @@
  * the live site, so menu and price updates show up immediately. The saved
  * copy is only used when there's no connection (or it's too slow to answer).
  * When it's too slow, the network's answer is still saved when it arrives, so
- * the next visit gets the newer copy.
+ * the next visit gets the newer copy. While that late save is still running, a
+ * newly published sw.js waits to take over until it finishes (Firefox and
+ * Safari).
  *
  * Bump CACHE_VERSION when the PRECACHE list below changes. Bump it also to
  * clear every visitor's saved copies if a bad version was ever cached.
