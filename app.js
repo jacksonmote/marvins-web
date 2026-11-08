@@ -4,11 +4,29 @@
 
   var root = document.documentElement;
 
-  // 1. Offline support
+  // 1. Offline support. The pages' Content-Security-Policy requires Trusted
+  // Types, so in browsers that support them the worker's address has to come
+  // from this policy, which only ever allows /sw.js. If the policy can't be
+  // created, skip offline support so the rest of this file still runs.
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js').catch(function () {});
-    });
+    var swUrl = '/sw.js';
+    if (window.trustedTypes && window.trustedTypes.createPolicy) {
+      try {
+        swUrl = window.trustedTypes.createPolicy('marvins-sw', {
+          createScriptURL: function (url) {
+            if (url === '/sw.js') return url;
+            throw new TypeError('Only /sw.js can be registered');
+          }
+        }).createScriptURL('/sw.js');
+      } catch (e) {
+        swUrl = null;
+      }
+    }
+    if (swUrl) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register(swUrl).catch(function () {});
+      });
+    }
   }
 
   // 2. App mode: opened from the home screen
@@ -35,6 +53,16 @@
       frame.src = mapFrame.getAttribute('data-map-src');
       frame.title = "Map to Marvin's at 202 S College Ave";
       frame.setAttribute('allowfullscreen', '');
+      // Set before the frame is added, since it starts loading then. The
+      // sandbox lets the map run as Google's own site and open Google Maps in a
+      // new tab, and nothing else: no forms, downloads, dialogs, or taking over
+      // this page. (Without allow-same-origin, Google's map code throws errors.)
+      // credentialless (Chromium browsers on computers and Android; Firefox and
+      // Safari ignore it, as does every iPhone/iPad browser, since they all use
+      // Safari's engine) loads the map without the visitor's Google cookies
+      // and throws away what it saves on leaving.
+      frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox');
+      frame.setAttribute('credentialless', '');
       mapFrame.replaceWith(frame);
     };
 
