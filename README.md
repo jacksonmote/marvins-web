@@ -19,7 +19,7 @@
 **For visitors**
 
 - Full menu with prices, half-size options, and a featured GCB section
-- Daily specials, hours, and a Google Map that loads automatically when a visitor scrolls near the Location section, so visitors who don't scroll that far load nothing from Google. The map runs in a sandbox, and Chrome, Edge, and other Chromium browsers on computers and Android load it without the visitor's Google cookies (Firefox and Safari, and every browser on iPhone and iPad, Chrome included, since they all use Safari's engine, may still let Google use its cookies there)
+- Daily specials, hours, and a Google Map that loads automatically when a visitor scrolls near the Location section, so visitors who don't scroll that far load nothing from Google. The map runs in a sandbox, and Chrome, Edge, and other Chromium browsers on computers and Android load it without the visitor's Google cookies (Firefox and Safari, and every browser on iPhone and iPad, Chrome included, which all use Safari's engine, may still let Google use its cookies there)
 - A short "unofficial fan site" note in the hero that links to Marvin's Facebook page for official news, alongside the full disclaimer at the bottom of the page
 - Automatic dark mode that follows the device's light/dark setting (no toggle button); the printed menu stays black on white either way
 - Category bar that stays pinned while scrolling the menu
