@@ -47,7 +47,8 @@ Unofficial fan website for Marvin's restaurant in Greencastle, Indiana: plain HT
 
 ## Collaboration
 - Fetch `origin` and bring your branch up to date with `main` before pushing.
-- `main` takes changes only through pull requests. Required checks, by exact job name: **HTML validation**, **Link check**, **Site files**. Never rename these jobs (or the Lighthouse jobs, **Lighthouse (mobile)** and **Lighthouse (desktop)**): branch protection matches the names exactly, so a renamed job would leave a required check waiting forever.
+- `main` takes changes only through pull requests. Required checks, by exact job name: **HTML validation**, **Link check**, **Site files**, **Lighthouse (mobile)**, **Lighthouse (desktop)**. Never rename these jobs, and never add `paths` or `paths-ignore` filters to their workflows' `pull_request` trigger: branch protection matches the names exactly, so a renamed or skipped job would leave a required check waiting forever.
 - A new commit on a PR cancels its older check run.
-- The Lighthouse workflow is not a required check yet. If it fails, open the run's `lighthouse-mobile` / `lighthouse-desktop` artifact for the reports. Turn off a single audit (with a comment saying why) rather than lowering a whole category.
+- If Lighthouse fails on Performance alone and the change can't affect it, use "Re-run failed jobs" first: GitHub's runners vary in speed.
+- If Lighthouse fails, open the run's `lighthouse-mobile` / `lighthouse-desktop` artifact for the reports. Turn off a single audit (with a comment saying why) rather than lowering a whole category.
 - After a merge, confirm the "pages build and deployment", "Site checks", and "Lighthouse" runs pass.
