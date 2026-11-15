@@ -6,8 +6,9 @@
 //
 // It also guards what the privacy page (privacy/index.html) promises: every
 // page's footer links to it (and to the accessibility page,
-// accessibility/index.html), its contact email appears nowhere else, and no
-// page loads anything from another origin except the Google Maps embed.
+// accessibility/index.html), each of those two pages' contact email appears on
+// its own page and nowhere else, and no page loads anything from another
+// origin except the Google Maps embed.
 // And it keeps every page's Content-Security-Policy strict (see h below) and
 // makes sure app.js and sw.js name no outside address (see i).
 
@@ -158,24 +159,41 @@ for (const file of pages) {
   }
 }
 
-// f. The privacy contact email appears on the privacy page only
-const privacyHtml = read(PRIVACY_PAGE);
-if (privacyHtml !== null) {
-  const emails = [...new Set([...privacyHtml.matchAll(/mailto:([^"?\s]+)/gi)].map((m) => m[1].toLowerCase()))];
+// f. Each contact email appears on its own page only: the privacy address on
+// the privacy page, the accessibility address on the accessibility page. Each
+// of those pages must have exactly one mailto: address, and its name (the part
+// before the @) must match the page, so the two can't be swapped. No other
+// file may contain a mailto: link or either address. The addresses are read
+// from the pages, so they aren't repeated in this script.
+const CONTACT_PAGES = [
+  { file: PRIVACY_PAGE, name: 'privacy' },
+  { file: ACCESSIBILITY_PAGE, name: 'accessibility' },
+];
+const contacts = [];
+for (const cp of CONTACT_PAGES) {
+  const html = read(cp.file);
+  if (html === null) continue;
+  const emails = [...new Set([...html.matchAll(/mailto:([^"'?\s<>]+)/gi)].map((m) => m[1].toLowerCase()))];
   if (emails.length !== 1) {
-    problems.push(`${PRIVACY_PAGE}: expected exactly one contact email (mailto: link), found ${emails.length}`);
+    problems.push(`${cp.file}: expected exactly one contact email (mailto: link), found ${emails.length}`);
   }
-  const textFile = /\.(html|css|js|json|md|ya?ml|toml|txt|xml|webmanifest)$/i;
-  for (const file of allFiles) {
-    if (file === PRIVACY_PAGE || file === '.github/scripts/check-site.js') continue; // this script mentions mailto: itself
-    if (!(textFile.test(file) || file === 'CNAME')) continue;
-    const text = read(file);
-    if (text === null) continue;
-    const lower = text.toLowerCase();
-    if (lower.includes('mailto:')) problems.push(`${file}: contains a mailto: link; the privacy contact email may appear only on ${PRIVACY_PAGE}`);
-    for (const e of emails) {
-      if (lower.includes(e)) problems.push(`${file}: contains the privacy contact email; it may appear only on ${PRIVACY_PAGE}`);
-    }
+  for (const email of emails) {
+    if (email.startsWith(`${cp.name}@`)) contacts.push({ ...cp, email });
+    else problems.push(`${cp.file}: its contact email must be the ${cp.name} address (${cp.name}@...); found a different one`);
+  }
+}
+const textFile = /\.(html|css|js|json|md|ya?ml|toml|txt|xml|webmanifest)$/i;
+for (const file of allFiles) {
+  if (file === '.github/scripts/check-site.js') continue; // this script mentions mailto: itself
+  if (!(textFile.test(file) || file === 'CNAME')) continue;
+  const text = read(file);
+  if (text === null) continue;
+  const lower = text.toLowerCase();
+  if (lower.includes('mailto:') && !CONTACT_PAGES.some((cp) => cp.file === file)) {
+    problems.push(`${file}: contains a mailto: link; contact emails may appear only on ${PRIVACY_PAGE} (privacy) and ${ACCESSIBILITY_PAGE} (accessibility)`);
+  }
+  for (const c of contacts) {
+    if (c.file !== file && lower.includes(c.email)) problems.push(`${file}: contains the ${c.name} contact email; it may appear only on ${c.file}`);
   }
 }
 

@@ -1,6 +1,8 @@
 # Link checker settings used by .github/workflows/site-checks.yml
 
-# Check web links and in-page jump links (#menu, #hours, ...).
+# Check web links and in-page jump links (#menu, #hours, ...). Only these
+# schemes are checked, so email and phone links are skipped, and lychee never
+# contacts an email address.
 scheme = ["https", "http", "file"]
 include_fragments = "full"
 
