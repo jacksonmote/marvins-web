@@ -161,35 +161,58 @@ for (const file of pages) {
 
 // f. Each contact email appears on its own page only: the privacy address on
 // the privacy page, the accessibility address on the accessibility page. Each
-// of those pages must have exactly one mailto: address, and its name (the part
-// before the @) must match the page, so the two can't be swapped. No other
-// file may contain a mailto: link or either address. The addresses are read
-// from the pages, so they aren't repeated in this script.
+// address is the page's name, an @, and CONTACT_DOMAIN (compared in lower
+// case). Each of those pages must have exactly one mailto: address, it must be
+// exactly that page's address (right name, so the two can't be swapped, and
+// right domain, so a typo or another domain can't slip in), and the same
+// address must be shown in the page's text, since people copy it as often as
+// they click it. No other file may contain a mailto: link or either address.
+// The full addresses are built from the name and the domain, never written
+// out here, so this script is held to the same rule as every other file.
+const CONTACT_DOMAIN = 'motetechnologygroup.com';
 const CONTACT_PAGES = [
   { file: PRIVACY_PAGE, name: 'privacy' },
   { file: ACCESSIBILITY_PAGE, name: 'accessibility' },
 ];
-const contacts = [];
-for (const cp of CONTACT_PAGES) {
+const contacts = CONTACT_PAGES.map((cp) => ({ ...cp, email: `${cp.name}@${CONTACT_DOMAIN}` }));
+// For messages: name one of the two contact addresses without printing it
+const describeEmail = (email) => {
+  const known = contacts.find((c) => c.email === email);
+  return known ? `the ${known.name} address` : email;
+};
+for (const cp of contacts) {
   const html = read(cp.file);
   if (html === null) continue;
   const emails = [...new Set([...html.matchAll(/mailto:([^"'?\s<>]+)/gi)].map((m) => m[1].toLowerCase()))];
   if (emails.length !== 1) {
     problems.push(`${cp.file}: expected exactly one contact email (mailto: link), found ${emails.length}`);
   }
+  // The page's text: comments and tags (with their attributes) removed
+  const pageText = html.replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]*>/g, ' ').toLowerCase();
+  const shown = [...new Set(pageText.match(/[a-z0-9._%+-]+@[a-z0-9.-]*[a-z0-9]/g) || [])];
   for (const email of emails) {
-    if (email.startsWith(`${cp.name}@`)) contacts.push({ ...cp, email });
-    else problems.push(`${cp.file}: its contact email must be the ${cp.name} address (${cp.name}@...); found a different one`);
+    const at = email.lastIndexOf('@');
+    const name = at === -1 ? email : email.slice(0, at);
+    const domain = at === -1 ? '' : email.slice(at + 1);
+    if (name !== cp.name) {
+      problems.push(`${cp.file}: the contact email must be the ${cp.name} address (${cp.name}@...); found ${name}@...`);
+    }
+    if (domain !== CONTACT_DOMAIN) {
+      problems.push(`${cp.file}: the contact email must be on the ${CONTACT_DOMAIN} domain; found ${domain || 'no domain'}`);
+    }
+    if (!shown.includes(email)) {
+      problems.push(`${cp.file}: the email address shown in the page's text must match the mailto: link exactly; the text shows ${shown.map(describeEmail).join(', ') || 'no email address'}`);
+    }
   }
 }
 const textFile = /\.(html|css|js|json|md|ya?ml|toml|txt|xml|webmanifest)$/i;
 for (const file of allFiles) {
-  if (file === '.github/scripts/check-site.js') continue; // this script mentions mailto: itself
   if (!(textFile.test(file) || file === 'CNAME')) continue;
   const text = read(file);
   if (text === null) continue;
   const lower = text.toLowerCase();
-  if (lower.includes('mailto:') && !CONTACT_PAGES.some((cp) => cp.file === file)) {
+  // This script mentions mailto: itself, but it gets no pass on the addresses
+  if (lower.includes('mailto:') && file !== '.github/scripts/check-site.js' && !contacts.some((c) => c.file === file)) {
     problems.push(`${file}: contains a mailto: link; contact emails may appear only on ${PRIVACY_PAGE} (privacy) and ${ACCESSIBILITY_PAGE} (accessibility)`);
   }
   for (const c of contacts) {
