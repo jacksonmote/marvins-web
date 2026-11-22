@@ -9,8 +9,9 @@
 // accessibility/index.html), each of those two pages' contact email appears on
 // its own page and nowhere else, and no page loads anything from another
 // origin except the Google Maps embed.
-// And it keeps every page's Content-Security-Policy strict (see h below) and
-// makes sure app.js and sw.js name no outside address (see i).
+// And it keeps every page's Content-Security-Policy strict (see h below),
+// makes sure app.js and sw.js name no outside address (see i), and keeps every
+// link in the same tab (see j).
 
 const fs = require('fs');
 const path = require('path');
@@ -367,9 +368,27 @@ for (const file of ['app.js', 'sw.js']) {
   });
 }
 
+// j. Links open in the same tab, on purpose: a new tab or window is easy to
+// miss (especially with a screen reader or on a phone) and breaks the Back
+// button (see AGENTS.md). So no page may use target="_blank" in any quoting
+// or case, on any tag (<a>, <area>, <base>, ...), comments included. Any
+// other target except _self, _parent, and _top names a window, which also
+// opens a new tab, so those fail too.
+const SAME_TAB_TARGETS = new Set(['', '_self', '_parent', '_top']);
+for (const file of pages) {
+  const html = file === 'index.html' ? indexHtml : read(file);
+  if (html === null) continue;
+  for (const m of html.matchAll(attrRegex('target', 'gi'))) {
+    const target = attrValue(m, 1).trim().toLowerCase();
+    if (!SAME_TAB_TARGETS.has(target)) {
+      problems.push(`${file}: found target="${attrValue(m, 1).trim()}", which opens a new tab or window; the site keeps every link in the same tab on purpose (see AGENTS.md), so remove the target attribute`);
+    }
+  }
+}
+
 if (problems.length > 0) {
   console.error(`Site file check FAILED (${problems.length} problem${problems.length === 1 ? '' : 's'}):`);
   for (const p of problems) console.error(`  - ${p}`);
   process.exit(1);
 }
-console.log('Site file check passed: PRECACHE files, manifest, JSON-LD, local references, privacy and accessibility footer links, outside requests, Content-Security-Policy, and outside addresses in app.js and sw.js are all fine.');
+console.log('Site file check passed: PRECACHE files, manifest, JSON-LD, local references, privacy and accessibility footer links, outside requests, Content-Security-Policy, outside addresses in app.js and sw.js, and same-tab links are all fine.');
