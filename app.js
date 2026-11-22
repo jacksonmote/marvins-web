@@ -1,4 +1,4 @@
-/* Site behavior: offline support, home-screen app mode, print button, the scroll-loaded map, and the install tip */
+/* Site behavior: offline support, home-screen app mode, print button, the scroll-loaded map, the category bar, and the install tip */
 (function () {
   'use strict';
 
@@ -78,9 +78,37 @@
     }
   }
 
-  // 5. Install tip (homepage only, never in app mode)
+  // 5. Category bar (homepage only): on narrow screens the bar scrolls
+  // sideways, and browsers don't scroll it for a link that's only partly in
+  // view, so its edge and focus outline stay cut off. When a link gets focus,
+  // scroll the bar just enough to show all of it. This moves the list itself
+  // (not scrollIntoView), so the page never scrolls up or down, and it jumps
+  // straight there with no animation.
+  var catList = document.querySelector('.cat-nav ul');
+  if (catList) {
+    catList.addEventListener('focusin', function (e) {
+      if (e.target.tagName !== 'A') return;
+      var bar = catList.getBoundingClientRect();
+      var link = e.target.getBoundingClientRect();
+      if (link.left < bar.left) catList.scrollLeft -= Math.ceil(bar.left - link.left);
+      else if (link.right > bar.right) catList.scrollLeft += Math.ceil(link.right - bar.right);
+    });
+  }
+
+  // 6. Install tip (homepage only, never in app mode)
   var tip = document.getElementById('install-tip');
   if (!tip || isStandalone) return;
+
+  // When the tip appears, a hidden status line (role="status") gets one short
+  // sentence for screen readers, matching the tip's version. Keyboard focus
+  // stays where it is. The line is emptied whenever the tip is hidden.
+  var tipStatus = document.getElementById('install-tip-status');
+  var ANNOUNCE = {
+    'ios-safari': "Tip: you can add Marvin's to your home screen from Safari's Share menu.",
+    'ios-chrome': "Tip: you can add Marvin's to your home screen with the Share button in Chrome's address bar.",
+    'ios-other': "Tip: you can add Marvin's to your home screen from your browser's Share menu.",
+    'android': "Tip: you can install Marvin's on your home screen with the Install button at the bottom of the screen."
+  };
 
   var KEY = 'marvins-install-tip-dismissed';
   var SNOOZE_DAYS = 30;
@@ -100,14 +128,21 @@
     if (dismissedRecently()) return;
     tip.setAttribute('data-mode', mode);
     tip.hidden = false;
+    if (tipStatus) tipStatus.textContent = ANNOUNCE[mode] || '';
   }
 
   function hide() {
     tip.hidden = true;
+    if (tipStatus) tipStatus.textContent = '';
     remember();
   }
 
   tip.querySelector('.install-close').addEventListener('click', hide);
+  // Escape closes the tip like its x button (same 30-day snooze), but only
+  // while it's showing
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !tip.hidden) hide();
+  });
 
   // iPhone / iPad: Safari never offers to install, so explain the Share menu
   var ua = navigator.userAgent;
@@ -139,8 +174,5 @@
     deferred.userChoice.then(function () { deferred = null; hide(); });
   });
 
-  window.addEventListener('appinstalled', function () {
-    tip.hidden = true;
-    remember();
-  });
+  window.addEventListener('appinstalled', hide);
 })();

@@ -131,6 +131,19 @@ h3 {
     padding: .5rem 1rem;
     z-index: 10;
 }
+/* Hidden from view but still read by screen readers (the install tip's status line) */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
 
 /* ---------- Top bar ---------- */
 .topbar {
